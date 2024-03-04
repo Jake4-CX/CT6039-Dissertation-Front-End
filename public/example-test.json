@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "name": "Billing Panel Load Test",
+    "version": "2.3",
+    "creationDate": "2024-03-01T14:25:41.126Z",
+    "updatedDate": "2024-03-03T19:51:28.414Z"
+  },
+  "variables": [
+    {
+      "id": "5f5e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e3e",
+      "name": "baseUrl",
+      "value": "https://billing-panel-load-test.com",
+      "type": "string"
+    },
+    {
+      "id": "5f5e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e3f",
+      "name": "username",
+      "value": "user",
+      "type": "string"
+    },
+    {
+      "id": "5f5e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e40",
+      "name": "password",
+      "value": "password",
+      "type": "string"
+    }
+  ],
+  "actions": [
+    []
+  ]
+}

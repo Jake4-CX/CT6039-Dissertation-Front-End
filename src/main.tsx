@@ -8,11 +8,18 @@ import { Toaster } from 'react-hot-toast';
 
 // Pages
 import LandingPage from './views/landing';
+import ViewLoadTestPage from './views/tests/viewTest';
+import EditLoadTestPage from './views/tests/editTest';
+import { ThemeProvider } from './components/themeProvider';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Outlet />}>
       <Route index element={<LandingPage />} />
+
+      {/* View Test */}
+      <Route path="/test/:loadTestId" element={<ViewLoadTestPage />} />
+      <Route path="/test/:loadTestId/edit" element={<EditLoadTestPage />} />
     </Route>
   )
 )
@@ -31,7 +38,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReduxProvider>
     <QueryClientProvider client={queryClient}>
       {/* <AppInitializer> */}
-      <RouterProvider router={router} />
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
       {/* </AppInitializer> */}
       <Toaster position='top-right' />
     </QueryClientProvider>

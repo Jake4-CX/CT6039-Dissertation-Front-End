@@ -12,16 +12,18 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from '@/components/ui/textarea';
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
+import TestEditorContextMenuComponent from '../testEditorContextMenu';
 
-const PostRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
+const PostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
 
   return (
-    <>
+    <TestEditorContextMenuComponent nodeId={node.id} nodeName={node.data.label}>
       <Card className='max-w-[16rem] h-fit'>
-        <Handle type="target" position={Position.Top} isConnectable={node.data.isConnectable} />
+        <Handle type="target" position={Position.Top} isConnectable={node.isConnectable} />
 
         <EditPostRequestNode {...node} />
 
@@ -38,26 +40,27 @@ const PostRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
           <div className='flex flex-row space-x-2'>
             <div className='flex flex-col'>
               <span className='text-primary text-[9px] font-bold'>URL</span>
-              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.label}</span>
+              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.url}</span>
             </div>
           </div>
         </CardContent>
 
-        <Handle type="source" position={Position.Bottom} id="a" style={undefined} isConnectable={node.data.isConnectable} />
+        <Handle type="source" position={Position.Bottom} id="a" style={undefined} isConnectable={node.isConnectable} />
       </Card>
-    </>
+    </TestEditorContextMenuComponent>
   );
 }
 
-const EditPostRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
+const EditPostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
 
   const [open, setOpen] = useState(false);
-  const [url, setUrl] = useState(node.data.label);
+  const [url, setUrl] = useState(node.data.url);
+  const [body, setBody] = useState(node.data.body);
 
   function handleSave() {
     console.log('Save changes');
     if (node.data.updateNodeData) {
-      node.data.updateNodeData(node.id, { label: url });
+      node.data.updateNodeData(node.id, { url, body });
     } else {
       console.log('updateNodeData not available');
     }
@@ -87,6 +90,7 @@ const EditPostRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
                   <span className="text-red-500">*</span>
                 </Label>
                 <Input
+                  type="url"
                   id="request_url"
                   defaultValue={url}
                   onChange={(e) => setUrl(e.target.value)}
@@ -99,10 +103,10 @@ const EditPostRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
                 <Label htmlFor="request_body" className="text-right">
                   Request Body
                 </Label>
-                <Input
+                <Textarea
                   id="request_body"
-                  defaultValue={url}
-                  onChange={(e) => setUrl(e.target.value)}
+                  defaultValue={body}
+                  onChange={(e) => setBody(e.target.value)}
                   className="col-span-3"
                 />
               </div>

@@ -15,13 +15,14 @@ import { Label } from "@/components/ui/label"
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
+import TestEditorContextMenuComponent from '../testEditorContextMenu';
 
-const GetRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
+const GetRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
 
   return (
-    <>
+    <TestEditorContextMenuComponent nodeId={node.id} nodeName={node.data.label}>
       <Card className='max-w-[16rem] h-fit'>
-        <Handle type="target" position={Position.Top} isConnectable={node.data.isConnectable} />
+        <Handle type="target" position={Position.Top} isConnectable={node.isConnectable} />
 
         <EditGetRequestNode {...node} />
 
@@ -38,26 +39,26 @@ const GetRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
           <div className='flex flex-row space-x-2'>
             <div className='flex flex-col'>
               <span className='text-primary text-[9px] font-bold'>URL</span>
-              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.label}</span> {/* fix lineclamp */}
+              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.url}</span> {/* fix lineclamp */}
             </div>
           </div>
         </CardContent>
 
-        <Handle type="source" position={Position.Bottom} id="a" style={undefined} isConnectable={node.data.isConnectable} />
+        <Handle type="source" position={Position.Bottom} id="a" style={undefined} isConnectable={node.isConnectable} />
       </Card>
-    </>
+    </TestEditorContextMenuComponent>
   );
 }
 
-const EditGetRequestNode: React.FC<NodeProps<NodeData>> = (node) => {
+const EditGetRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
 
   const [open, setOpen] = useState(false);
-  const [url, setUrl] = useState(node.data.label);
+  const [url, setUrl] = useState(node.data.url);
 
   function handleSave() {
     console.log('Save changes');
     if (node.data.updateNodeData) {
-      node.data.updateNodeData(node.id, { label: url });
+      node.data.updateNodeData(node.id, { url });
     } else {
       console.log('updateNodeData not available');
     }

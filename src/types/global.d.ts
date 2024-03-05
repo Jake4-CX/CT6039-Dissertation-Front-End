@@ -1,17 +1,13 @@
 interface NodeData {
-  label: string;
-  isConnectable: boolean;
-  updateNodeData?: (nodeId: string, newData: Partial<NodeData>) => void;
+  label: string,
+  updateNodeData?: (nodeId: string, newData: Partial<NodeData | RequestNodeData>) => void
+}
+
+interface RequestNodeData extends NodeData {
+  url: string,
+  body?: string
 }
 
 interface CustomNodeProps {
   data: NodeData;
-}
-
-interface ContextMenuComponentProps {
-  id: string;
-  top?: number;
-  left?: number;
-  right?: number;
-  bottom?: number;
 }

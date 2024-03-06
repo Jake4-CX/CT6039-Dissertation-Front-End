@@ -1,5 +1,6 @@
-import { Network, Workflow } from "lucide-react";
+import { IterationCcw, Network, Octagon, Play, Timer, Workflow } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import { ScrollArea } from "../ui/scroll-area";
 
 const TestEditorSidebarComponent: React.FC = () => {
 
@@ -21,49 +22,100 @@ const TestEditorSidebarComponent: React.FC = () => {
             </div>
           </div>
         </CardHeader>
-
-        <CardContent className="px-3">
-
-          {/* Requests section */}
-          <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mb-1">Requests</h2>
-          <div className="flex flex-col w-full space-y-3">
-            <div
-              className="w-full h-[2rem] bg-background border-green-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
-              draggable
-              onDragStart={(event) => onDragStart(event, 'getRequest')}
-            >
-              <span className="h-full w-[2rem] bg-green-500 rounded-l-sm flex items-center justify-center">
-                <Workflow className="h-4 w-4 text-muted" />
-              </span>
-              <p className="text-base font-semibold text-foreground">GET</p>
+        <ScrollArea className="h-[24rem]">
+          <CardContent className="px-3">
+            {/* Section containing start/stop */}
+            <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mb-1">Start/Stop</h2>
+            <div className="flex flex-col w-full space-y-3">
+              <div
+                className="w-full h-[2rem] bg-background border-green-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'start')}
+              >
+                <span className="h-full w-[2rem] bg-green-500 rounded-l-sm flex items-center justify-center">
+                  <Play className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">START</p>
+              </div>
+              <div
+                className="w-full h-[2rem] bg-background border-red-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'stop')}
+              >
+                <span className="h-full w-[2rem] bg-red-500 rounded-l-sm flex items-center justify-center">
+                  <Octagon className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">STOP</p>
+              </div>
             </div>
-            <div
-              className="w-full h-[2rem] bg-background border-amber-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
-              draggable
-              onDragStart={(event) => onDragStart(event, 'postRequest')}
-            >
-              <span className="h-full w-[2rem] bg-amber-500 rounded-l-sm flex items-center justify-center">
-                <Workflow className="h-4 w-4 text-muted" />
-              </span>
-              <p className="text-base font-semibold text-foreground">POST</p>
-            </div>
-          </div>
 
-          {/* Conditional section */}
-          <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mt-3 mb-1">Conditionals</h2>
-          <div className="flex flex-col w-full space-y-3">
-            <div
-              className="w-full h-[2rem] bg-background border-blue-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
-              draggable
-              onDragStart={(event) => onDragStart(event, 'ifCondition')}
-            >
-              <span className="h-full w-[2rem] bg-blue-500 rounded-l-sm flex items-center justify-center">
-                <Network className="h-4 w-4 text-muted" />
-              </span>
-              <p className="text-base font-semibold text-foreground">IF</p>
+            {/* Requests section */}
+            <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mb-1">Requests</h2>
+            <div className="flex flex-col w-full space-y-3">
+              <div
+                className="w-full h-[2rem] bg-background border-green-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'getRequest')}
+              >
+                <span className="h-full w-[2rem] bg-green-500 rounded-l-sm flex items-center justify-center">
+                  <Workflow className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">GET</p>
+              </div>
+              <div
+                className="w-full h-[2rem] bg-background border-amber-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'postRequest')}
+              >
+                <span className="h-full w-[2rem] bg-amber-500 rounded-l-sm flex items-center justify-center">
+                  <Workflow className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">POST</p>
+              </div>
             </div>
-          </div>
-        </CardContent>
+
+            {/* Conditional section */}
+            <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mt-3 mb-1">Conditionals</h2>
+            <div className="flex flex-col w-full space-y-3">
+              <div
+                className="w-full h-[2rem] bg-background border-blue-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'ifCondition')}
+              >
+                <span className="h-full w-[2rem] bg-blue-500 rounded-l-sm flex items-center justify-center">
+                  <Network className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">IF</p>
+              </div>
+            </div>
+
+            {/* Logic Flow section */}
+            <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mt-3 mb-1">Logic Flows</h2>
+            <div className="flex flex-col w-full space-y-3">
+              <div
+                className="w-full h-[2rem] bg-background border-gray-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'wait')}
+              >
+                <span className="h-full w-[2rem] bg-gray-500 rounded-l-sm flex items-center justify-center">
+                  <Timer className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">WAIT</p>
+              </div>
+
+              <div
+                className="w-full h-[2rem] bg-background border-gray-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'break')}
+              >
+                <span className="h-full w-[2rem] bg-gray-500 rounded-l-sm flex items-center justify-center">
+                  <IterationCcw className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">BREAK</p>
+              </div>
+            </div>
+          </CardContent>
+        </ScrollArea>
 
       </Card>
     </>

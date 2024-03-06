@@ -1,12 +1,13 @@
 import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Background, Controls, MiniMap, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, Node, Edge, OnNodesChange, OnEdgesChange, OnConnect, ReactFlowInstance } from 'reactflow';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import 'reactflow/dist/style.css';
 
 // Node imports
 import GetRequestNode from '@/components/flow/nodes/getRequest';
 import PostRequestNode from './nodes/postRequest';
+import IfConditionNode from './nodes/ifCondition';
 
 const nodeTypes = [
   {
@@ -18,6 +19,7 @@ const nodeTypes = [
     },
     connecting: {
       connectable: true,
+      maxConnections: 1
     }
   },
   {
@@ -29,6 +31,18 @@ const nodeTypes = [
     },
     connecting: {
       connectable: true,
+      maxConnections: 1
+    }
+  },
+  {
+    name: "ifCondition",
+    component: IfConditionNode,
+    data: {
+      label: "If Condition",
+    },
+    connecting: {
+      connectable: true,
+      maxConnections: 1
     }
   }
 ] as {
@@ -36,7 +50,8 @@ const nodeTypes = [
   component: React.FC<unknown>,
   data?: RequestNodeData | NodeData,
   connecting?: {
-    connectable: boolean
+    connectable: boolean,
+    maxConnections: number
   }
 }[];
 
@@ -130,7 +145,7 @@ const TestEditorComponent: React.FC = () => {
         id: uuidv4(),
         type,
         position,
-        data: nodeType.data,
+        data: {...nodeType.data, updateNodeData},
         connectable: nodeType.connecting?.connectable ?? false
       };
 

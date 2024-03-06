@@ -1,4 +1,4 @@
-import { Workflow } from "lucide-react";
+import { Network, Workflow } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 
 const TestEditorSidebarComponent: React.FC = () => {
@@ -46,6 +46,21 @@ const TestEditorSidebarComponent: React.FC = () => {
                 <Workflow className="h-4 w-4 text-muted" />
               </span>
               <p className="text-base font-semibold text-foreground">POST</p>
+            </div>
+          </div>
+
+          {/* Conditional section */}
+          <h2 className="whitespace-nowrap tracking-tight text-sm font-medium mt-3 mb-1">Conditionals</h2>
+          <div className="flex flex-col w-full space-y-3">
+            <div
+              className="w-full h-[2rem] bg-background border-blue-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+              draggable
+              onDragStart={(event) => onDragStart(event, 'ifCondition')}
+            >
+              <span className="h-full w-[2rem] bg-blue-500 rounded-l-sm flex items-center justify-center">
+                <Network className="h-4 w-4 text-muted" />
+              </span>
+              <p className="text-base font-semibold text-foreground">IF</p>
             </div>
           </div>
         </CardContent>

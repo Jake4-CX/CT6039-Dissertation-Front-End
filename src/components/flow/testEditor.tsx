@@ -49,7 +49,7 @@ const nodeTypes = [
   name: string,
   component: React.FC<unknown>,
   data?: RequestNodeData | NodeData,
-  connecting?: {
+  connecting: {
     connectable: boolean,
     maxConnections: number
   }
@@ -64,9 +64,29 @@ function getNodeType(nodeType: string) {
 
 const TestEditorComponent: React.FC = () => {
 
-  const initialNodes: Node<RequestNodeData>[] = [
-    { id: '458fe167-1d24-44c8-85f6-1ccccfcbca9f', position: { x: 0, y: 0 }, data: { label: "Get Request", url: "https://example.com/billing", updateNodeData }, type: "getRequest", connectable: true },
-    { id: 'add1ff79-911d-40c7-9400-3ed2f266cb5f', position: { x: 0, y: 100 }, data: { label: "Post Request", url: 'https://example.com/checkout', updateNodeData }, type: 'postRequest', connectable: true },
+  const initialNodes: Node[] = [
+    {
+      id: '458fe167-1d24-44c8-85f6-1ccccfcbca9f',
+      position: { x: 0, y: 0 },
+      data: {
+        label: "Get Request",
+        url: "https://example.com/billing",
+        updateNodeData
+      },
+      type: "getRequest",
+      connectable: true
+    },
+    {
+      id: 'add1ff79-911d-40c7-9400-3ed2f266cb5f',
+      position: { x: 0, y: 100 },
+      data: {
+        label: "Post Request",
+        url: 'https://example.com/checkout',
+        updateNodeData
+      },
+      type: 'postRequest',
+      connectable: true
+    },
   ];
 
   const initialEdges: Edge[] = [
@@ -145,7 +165,7 @@ const TestEditorComponent: React.FC = () => {
         id: uuidv4(),
         type,
         position,
-        data: {...nodeType.data, updateNodeData},
+        data: { ...nodeType.data, updateNodeData },
         connectable: nodeType.connecting?.connectable ?? false
       };
 

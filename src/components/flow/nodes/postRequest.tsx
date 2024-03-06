@@ -17,13 +17,14 @@ import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 import TestEditorContextMenuComponent from '../testEditorContextMenu';
+import DefaultHandle from '../handles/default';
 
 const PostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
 
   return (
     <TestEditorContextMenuComponent nodeId={node.id} nodeName={node.data.label}>
       <Card className='max-w-[16rem] h-fit'>
-        <Handle type="target" position={Position.Top} isConnectable={node.isConnectable} />
+        <Handle type="target" id="input" position={Position.Top} isConnectable={node.isConnectable} />
 
         <EditPostRequestNode {...node} />
 
@@ -45,7 +46,7 @@ const PostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
           </div>
         </CardContent>
 
-        <Handle type="source" position={Position.Bottom} id="a" style={undefined} isConnectable={node.isConnectable} />
+        <DefaultHandle type="source" position={Position.Bottom} id="output" style={undefined} isConnectable={1} />
       </Card>
     </TestEditorContextMenuComponent>
   );

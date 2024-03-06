@@ -50,6 +50,7 @@ const TestEditorContextMenuComponent: React.FC<TestEditorContextMenuComponentPro
         </ContextMenuTrigger>
         <ContextMenuContent className="w-64">
           <ContextMenuLabel inset>{nodeName}</ContextMenuLabel>
+          <ContextMenuLabel inset>{nodeId}</ContextMenuLabel>
           <ContextMenuSeparator />
 
           <ContextMenuItem inset onClick={duplicateNode}>

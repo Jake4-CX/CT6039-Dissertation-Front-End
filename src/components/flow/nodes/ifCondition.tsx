@@ -29,6 +29,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronsUpDown, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import DefaultHandle from '../handles/default';
 
 const DEFAULT_HANDLE_STYLE = {
   width: 10,
@@ -41,7 +42,7 @@ const IfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => {
   return (
     <TestEditorContextMenuComponent nodeId={node.id} nodeName={node.data.label}>
       <Card className='max-w-[16rem] h-fit'>
-        <Handle type="target" position={Position.Top} isConnectable={node.isConnectable} />
+        <Handle type="target" id="input" position={Position.Top} isConnectable={node.isConnectable} />
 
         <EditIfConditionNode {...node} />
 
@@ -71,20 +72,20 @@ const IfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => {
           </div>
         </CardContent>
 
-        <Handle
+        <DefaultHandle
           type="source"
           id="true"
           position={Position.Bottom}
           style={{ ...DEFAULT_HANDLE_STYLE, left: '25%', background: 'rgb(34 197 94)' }}
           onConnect={(params) => console.log('handle onConnect', params)}
-          isConnectable={node.isConnectable}
+          isConnectable={1}
         />
-        <Handle
+        <DefaultHandle
           type="source"
           position={Position.Bottom}
           id="false"
           style={{ ...DEFAULT_HANDLE_STYLE, left: '75%', background: 'rgb(239 68 68)' }}
-          isConnectable={node.isConnectable}
+          isConnectable={1}
         />
 
       </Card>

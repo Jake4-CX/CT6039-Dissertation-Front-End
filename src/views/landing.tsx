@@ -2,21 +2,9 @@ import { Button } from "@/components/ui/button";
 import DefaultLayout from "@/layouts/defaultLayout";
 import { TbPlus } from "react-icons/tb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import OnGoingTestCard from "@/components/global/cards/ongoingTestCard";
 import CreateTestModal from "@/components/views/dashboard/modals/createTest";
-
-const tests = [
-  { id: 1, name: "Example_01", created: "2021-09-01" },
-  { id: 2, name: "Example_02", created: "2021-09-02" },
-  { id: 3, name: "Example_03", created: "2021-09-03" },
-  { id: 4, name: "Example_04", created: "2021-09-04" }
-] as {
-  id: number;
-  name: string;
-  created: string;
-}[];
-
+import TestsTableComponent from "@/components/views/dashboard/tables/tests";
 
 const LandingPage: React.FC = () => {
 
@@ -62,27 +50,7 @@ const LandingPage: React.FC = () => {
             <CreateTestModal />
           </CardHeader>
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-
-                {
-                  tests.map((test) => (
-                    <TableRow key={test.id}>
-                      <TableCell className="font-medium">{test.name}</TableCell>
-                      <TableCell>{test.created}</TableCell>
-                    </TableRow>
-                  ))
-                }
-              </TableBody>
-            </Table>
-
+            <TestsTableComponent />
           </CardContent>
         </Card>
       </div>

@@ -4,6 +4,7 @@ import { TbPlus } from "react-icons/tb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import OnGoingTestCard from "@/components/global/cards/ongoingTestCard";
+import CreateTestModal from "@/components/views/dashboard/modals/createTest";
 
 const tests = [
   { id: 1, name: "Example_01", created: "2021-09-01" },
@@ -58,10 +59,7 @@ const LandingPage: React.FC = () => {
               <CardTitle className="text-sm font-medium">My Test Plans</CardTitle>
               <CardDescription className="text-sm font-normal">View all your test plans</CardDescription>
             </div>
-            <Button className="rounded-full" size="icon" variant={"outline"}>
-              <TbPlus className="w-4 h-4" />
-              <span className="sr-only">New test</span>
-            </Button>
+            <CreateTestModal />
           </CardHeader>
           <CardContent className="p-0">
             <Table>

@@ -6,18 +6,6 @@ import { RefreshCw } from "lucide-react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
-const tests = [
-  { id: 1, name: "Example_01", created: "2021-09-01" },
-  { id: 2, name: "Example_02", created: "2021-09-02" },
-  { id: 3, name: "Example_03", created: "2021-09-03" },
-  { id: 4, name: "Example_04", created: "2021-09-04" }
-] as {
-  id: number;
-  name: string;
-  created: string;
-}[];
-
-
 const TestsTableComponent: React.FC = () => {
 
   const navigate = useNavigate();

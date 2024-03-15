@@ -1,22 +1,22 @@
 interface LoadTest {
-  ID: string,
-  Name: string,
-  State: "PENDING" | "RUNNING" | "CANCELLED" | "COMPLETED",
-  CreatedAt: string,
-  LastUpdatedAt: string,
-  Metrics: {
-    GlobalMetrics: {
+  id: string,
+  name: string,
+  state: "PENDING" | "RUNNING" | "CANCELLED" | "COMPLETED",
+  createdAt: string,
+  lastUpdatedAt: string,
+  metrics: {
+    globalMetrics: {
       totalRequests: number,
       successfulRequests: number,
       failedRequests: number,
       totalResponseTime: number,
       averageResponseTime: number,
     },
-    Metrics: undefined
+    metrics: undefined
   },
-  LoadTestPlan: {
-    URL: string,
-    Duration: number,
-    VirtualUsers: number
+  loadTestPlan: {
+    url: string,
+    duration: number,
+    virtualUsers: number
   }
 }

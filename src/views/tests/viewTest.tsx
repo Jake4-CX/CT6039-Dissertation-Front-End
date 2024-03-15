@@ -87,7 +87,7 @@ const ViewLoadTestPage: React.FC = () => {
             <Card className="w-full min-h-[32rem]">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <div className="flex flex-col">
-                  <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">{loadTest.data.Name}</h3>
+                  <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">{loadTest.data.name}</h3>
                   <span className="text-muted-foreground text-sm font-normal space-x-1">
                     <span className="font-semibold">Last updated:</span>
                     <span>{moment(loadTest.dataUpdatedAt).fromNow()}</span>
@@ -118,7 +118,7 @@ const ViewLoadTestPage: React.FC = () => {
                         {/* Buttons - Start Stop, same row */}
                         <div className="flex flex-row justify-between items-center">
                           <div className="flex flex-row space-x-2">
-                            <Button size="sm" variant={"outline"} disabled={loadTest.data.State == "RUNNING"} onClick={startTestButton}>
+                            <Button size="sm" variant={"outline"} disabled={loadTest.data.state == "RUNNING"} onClick={startTestButton}>
                               {
                                 isStartTestPending ? (
                                   <>
@@ -130,7 +130,7 @@ const ViewLoadTestPage: React.FC = () => {
                                 )
                               }
                             </Button>
-                            <Button size="sm" variant={"outline"} disabled={loadTest.data.State !== "RUNNING"} onClick={stopTestButton}>
+                            <Button size="sm" variant={"outline"} disabled={loadTest.data.state !== "RUNNING"} onClick={stopTestButton}>
                               {
                                 isStopTestPending ? (
                                   <>

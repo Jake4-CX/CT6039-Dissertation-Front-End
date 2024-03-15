@@ -51,12 +51,12 @@ const TestsTableComponent: React.FC = () => {
                   </TableRow>
                 ) : (
                   loadTests.data.map((test) => (
-                    <TableRow key={test.ID}>
-                      <TableCell className="font-medium">{test.Name}</TableCell>
-                      <TableCell>{moment(test.CreatedAt).calendar()}</TableCell>
+                    <TableRow key={test.id}>
+                      <TableCell className="font-medium">{test.name}</TableCell>
+                      <TableCell>{moment(test.createdAt).calendar()}</TableCell>
                       <TableCell>
                         <div className="flex flex-row justify-end space-x-2">
-                          <Button size="sm" variant="outline" className="rounded-full" onClick={() => navigate(`/test/` + test.ID)}>View</Button>
+                          <Button size="sm" variant="outline" className="rounded-full" onClick={() => navigate(`/test/` + test.id)}>View</Button>
                           <Button size="sm" variant="outline" className="rounded-full">Delete</Button>
                         </div>
                       </TableCell>

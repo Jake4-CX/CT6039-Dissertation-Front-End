@@ -11,11 +11,15 @@ import LandingPage from './views/landing';
 import ViewLoadTestPage from './views/tests/viewTest';
 import EditLoadTestPage from './views/tests/editTest';
 import { ThemeProvider } from './components/themeProvider';
+import WorkersPage from './views/workers/workers';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Outlet />}>
       <Route index element={<LandingPage />} />
+
+      {/* Workers */}
+      <Route path="/workers" element={<WorkersPage />} />
 
       {/* View Test */}
       <Route path="/test/:loadTestId" element={<ViewLoadTestPage />} />

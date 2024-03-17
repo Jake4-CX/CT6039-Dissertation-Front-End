@@ -19,7 +19,7 @@ import { Handle, NodeProps, Position } from 'reactflow';
 import TestEditorContextMenuComponent from '../testEditorContextMenu';
 import DefaultHandle from '../handles/default';
 
-const PostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
+const PostRequestNode: React.FC<NodeProps<PostRequestNodeData>> = (node) => {
 
   return (
     <TestEditorContextMenuComponent nodeId={node.id} nodeName={node.data.label}>
@@ -52,7 +52,7 @@ const PostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
   );
 }
 
-const EditPostRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
+const EditPostRequestNode: React.FC<NodeProps<PostRequestNodeData>> = (node) => {
 
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(node.data.url);

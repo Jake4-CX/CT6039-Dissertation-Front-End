@@ -1,9 +1,13 @@
 interface NodeData {
   label: string,
-  updateNodeData?: (nodeId: string, newData: Partial<NodeData | RequestNodeData | IfConditionNodeData>) => void
+  updateNodeData?: (nodeId: string, newData: Partial<NodeData | GetRequestNodeData | PostRequestNodeData | IfConditionNodeData>) => void
 }
 
-interface RequestNodeData extends NodeData {
+interface GetRequestNodeData extends NodeData {
+  url: string,
+}
+
+interface PostRequestNodeData extends NodeData {
   url: string,
   body?: string
 }

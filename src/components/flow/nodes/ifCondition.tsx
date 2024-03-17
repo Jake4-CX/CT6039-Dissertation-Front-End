@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Check, ChevronsUpDown, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import DefaultHandle from '../handles/default';
+import toast from 'react-hot-toast';
 
 const DEFAULT_HANDLE_STYLE = {
   width: 10,
@@ -103,7 +104,11 @@ const EditIfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => 
   function handleSave() {
     console.log('Save changes');
     if (node.data.updateNodeData) {
-      node.data.updateNodeData(node.id, { field, condition, value });
+      if (field && condition && value) {
+        node.data.updateNodeData(node.id, { field, condition, value });
+      } else {
+        toast.error('Field, condition, and value are required');
+      }
     } else {
       console.log('updateNodeData not available');
     }
@@ -148,6 +153,7 @@ const EditIfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => 
                 </Label>
                 <Input
                   id="value"
+                  type='number'
                   defaultValue={value}
                   onChange={(e) => setValue(e.target.value)}
                   className="col-span-3"

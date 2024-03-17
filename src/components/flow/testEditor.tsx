@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { ForwardRefRenderFunction, forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import ReactFlow, { Background, Controls, MiniMap, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, Node, Edge, OnNodesChange, OnEdgesChange, OnConnect, ReactFlowInstance } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,7 +20,7 @@ const nodeTypes = [
     connecting: {
       connectable: true,
       maxConnections: 1
-    }
+    },
   },
   {
     name: "postRequest",
@@ -39,6 +39,9 @@ const nodeTypes = [
     component: IfConditionNode,
     data: {
       label: "If Condition",
+      field: "response_code",
+      condition: "equals",
+      value: "200"
     },
     connecting: {
       connectable: true,
@@ -46,9 +49,9 @@ const nodeTypes = [
     }
   }
 ] as {
-  name: string,
+  name: "getRequest" | "postRequest" | "ifCondition",
   component: React.FC<unknown>,
-  data?: RequestNodeData | NodeData,
+  data?: GetRequestNodeData | PostRequestNodeData | IfConditionNodeData | NodeData,
   connecting: {
     connectable: boolean,
     maxConnections: number
@@ -62,7 +65,16 @@ function getNodeType(nodeType: string) {
   return nodeTypes.find((nt) => nt.name === nodeType);
 }
 
-const TestEditorComponent: React.FC = () => {
+interface TestEditorComponentHandles {
+  onSave: () => void;
+}
+
+interface TestEditorComponentProps {
+
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, TestEditorComponentProps> = (_props, ref) => {
 
   const initialNodes: Node[] = [
     {
@@ -105,6 +117,82 @@ const TestEditorComponent: React.FC = () => {
       )
     );
   }
+
+  function createNodeTree(nodes: CustomNode[], edges: CustomEdge[]): TreeNode[] {
+    const nodesMap: { [key: string]: TreeNode } = nodes.reduce((acc, node) => {
+
+      const data = node.data as GetRequestNodeData | PostRequestNodeData | IfConditionNodeData;
+
+      const treeNode: TreeNode = {
+        name: node.data.label || node.type,
+        type: node.type,
+        data: data,
+        children: [],
+      };
+
+      if (node.type === 'ifCondition') {
+        treeNode.conditions = { trueChildren: [], falseChildren: [] }; // Initialize for IF condition nodes
+      }
+
+      acc[node.id] = treeNode;
+      return acc;
+    }, {});
+
+    edges.forEach(edge => {
+      const parent = nodesMap[edge.source];
+      const child = nodesMap[edge.target];
+      if (!parent || !child) {
+        return;
+      }
+
+      if (parent.type === 'ifCondition') {
+        // Distinguish between True and False children based on the sourceHandle
+        const conditionType = edge.sourceHandle === 'true' ? 'trueChildren' : 'falseChildren';
+        parent.conditions![conditionType].push(child); // Use ! to assert conditions property exists
+      } else {
+        parent.children.push(child);
+      }
+    });
+
+    return nodes.filter(node => !edges.some(edge => edge.target === node.id)).map(node => nodesMap[node.id]);
+  }
+
+
+
+  const onSave = useCallback(() => {
+    if (reactFlowInstance) {
+      const allNodes: CustomNode[] = reactFlowInstance.getNodes() as CustomNode[];
+      const allEdges: CustomEdge[] = reactFlowInstance.getEdges() as CustomEdge[];
+
+      const unconnectedNodes = allNodes.filter(node => !allEdges.some(edge => edge.source === node.id || edge.target === node.id));
+
+      // console.log('save', reactFlowInstance.toObject());
+      if (unconnectedNodes.length > 0) {
+        console.log('unconnectedNodes', unconnectedNodes);
+        return; // Prevent saving if there are unconnected nodes
+      }
+
+      const ifConditionNodes = allNodes.filter(node => node.type === 'ifCondition');
+      const invalidIfConditions = ifConditionNodes.filter(node => {
+        const trueEdge = allEdges.find(edge => edge.source === node.id && edge.sourceHandle === 'true');
+        const falseEdge = allEdges.find(edge => edge.source === node.id && edge.sourceHandle === 'false');
+        return !trueEdge || !falseEdge;
+      });
+
+      if (invalidIfConditions.length > 0) {
+        console.log('Invalid If Conditions:', invalidIfConditions);
+        return; // Prevent saving if any If Condition node is incorrectly connected
+      }
+
+      const rootNodeTrees = createNodeTree(allNodes, allEdges);
+      console.log('Root Node Trees:', rootNodeTrees);
+    }
+  }, [reactFlowInstance]);
+
+  // Access onSave function from parent component
+  useImperativeHandle(ref, () => ({
+    onSave
+  }));
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -200,6 +288,7 @@ const TestEditorComponent: React.FC = () => {
       </ReactFlowProvider>
     </>
   )
-}
+};
 
-export default TestEditorComponent;
+// eslint-disable-next-line react-refresh/only-export-components
+export default forwardRef(TestEditorComponent);

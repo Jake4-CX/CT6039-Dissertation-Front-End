@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import DefaultLayout from "@/layouts/defaultLayout";
 import { useParams } from "react-router-dom";
+import { useRef } from "react";
 
 const EditLoadTestPage: React.FC = () => {
 
   const { loadTestId } = useParams<{ loadTestId: string }>();
+
+  const testEditorRef = useRef<{onSave: () => void}>(null);
 
   // const data = [
   //   { id: "1", name: "Unread" },
@@ -76,12 +79,19 @@ const EditLoadTestPage: React.FC = () => {
 
   // const [content, setContent] = useState("Admin Page")
 
+  const handleSave = () => {
+    const testEditor = testEditorRef.current;
+    if (testEditor) {
+      testEditor.onSave();
+    }
+  }
+
 
   return (
     <DefaultLayout>
       <p>Load Test ID: {loadTestId}</p>
       <div className="w-full flex items-end">
-        <Button className="ml-auto" size="sm" variant="default">
+        <Button className="ml-auto" size="sm" variant="default" onClick={handleSave}>
           Save Test
         </Button>
       </div>
@@ -97,7 +107,7 @@ const EditLoadTestPage: React.FC = () => {
         <TestEditorSidebarComponent />
 
         <Card className="w-full h-[460px]">
-          <TestEditorComponent />
+          <TestEditorComponent ref={testEditorRef} />
         </Card>
       </div>
     </DefaultLayout>

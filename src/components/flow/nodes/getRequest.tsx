@@ -18,7 +18,7 @@ import { Handle, Position, NodeProps } from 'reactflow';
 import TestEditorContextMenuComponent from '../testEditorContextMenu';
 import DefaultHandle from '../handles/default';
 
-const GetRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
+const GetRequestNode: React.FC<NodeProps<GetRequestNodeData>> = (node) => {
 
   return (
     <TestEditorContextMenuComponent nodeId={node.id} nodeName={node.data.label}>
@@ -51,7 +51,7 @@ const GetRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
   );
 }
 
-const EditGetRequestNode: React.FC<NodeProps<RequestNodeData>> = (node) => {
+const EditGetRequestNode: React.FC<NodeProps<GetRequestNodeData>> = (node) => {
 
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(node.data.url);

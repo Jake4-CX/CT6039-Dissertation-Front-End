@@ -1,4 +1,4 @@
-import { getTests } from "@/api/tests";
+import { deleteTest, getTests } from "@/api/tests";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -12,11 +12,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const TestsTableComponent: React.FC = () => {
 
@@ -29,7 +30,7 @@ const TestsTableComponent: React.FC = () => {
 
       const testsResponse = await getTests();
 
-      return testsResponse.data as LoadTest[];
+      return testsResponse.data as LoadTestModel[];
     }
   });
 
@@ -68,8 +69,8 @@ const TestsTableComponent: React.FC = () => {
                       <TableCell>{moment(test.createdAt).calendar()}</TableCell>
                       <TableCell>
                         <div className="flex flex-row justify-end space-x-2">
-                          <Button size="sm" variant="outline" className="rounded-full" onClick={() => navigate(`/test/` + test.id)}>View</Button>
-                          <DeleteTaskAlertModal />
+                          <Button size="sm" variant="outline" className="rounded-full" onClick={() => navigate(`/test/` + test.uuid)}>View</Button>
+                          <DeleteTaskAlertModal id={test.uuid} />
                         </div>
                       </TableCell>
 
@@ -91,8 +92,27 @@ const TestsTableComponent: React.FC = () => {
   )
 }
 
-const DeleteTaskAlertModal: React.FC = () => {
+const DeleteTaskAlertModal: React.FC<{ id: string }> = ({ id }) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["deleteTest"],
+    mutationFn: deleteTest,
+    onSuccess: () => {
+      toast.success("Test deleted");
+      queryClient.invalidateQueries({ queryKey: [`loadTests`] });
+      setIsOpen(false);
+    },
+    onError: () => {
+      toast.error("Failed to delete test");
+    }
+  });
+
+  function onClick() {
+    mutate(id);
+  }
 
   return (
     <>
@@ -110,7 +130,15 @@ const DeleteTaskAlertModal: React.FC = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Delete Task</AlertDialogAction>
+            <AlertDialogAction onClick={onClick} disabled={isPending}>
+              {
+                isPending ? <>
+                  <RefreshCw className="animate-spin w-4 h-4 mr-2" />
+                  Deleting Task
+                </> :
+                  "Delete Task"
+              }
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

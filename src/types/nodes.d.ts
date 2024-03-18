@@ -1,19 +1,3 @@
-interface CustomNodeData {
-  label?: string;
-  url?: string;
-}
-
-interface CustomNode {
-  id: string;
-  type: string;
-  data: CustomNodeData;
-}
-
-interface CustomEdge {
-  source: string;
-  target: string;
-  sourceHandle?: string;
-}
 
 interface TreeNode {
   name: string;

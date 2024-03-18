@@ -8,8 +8,33 @@ import 'reactflow/dist/style.css';
 import GetRequestNode from '@/components/flow/nodes/getRequest';
 import PostRequestNode from './nodes/postRequest';
 import IfConditionNode from './nodes/ifCondition';
+import StartNode from './nodes/startNode';
+import StopNode from './nodes/stopNode';
+import toast from 'react-hot-toast';
 
 const nodeTypes = [
+  {
+    name: "startNode",
+    component: StartNode,
+    data: {
+      label: "Start Node"
+    },
+    connecting: {
+      connectable: true,
+      maxConnections: 1
+    }
+  },
+  {
+    name: "stopNode",
+    component: StopNode,
+    data: {
+      label: "Stop Node"
+    },
+    connecting: {
+      connectable: true,
+      maxConnections: 1
+    }
+  },
   {
     name: "getRequest",
     component: GetRequestNode,
@@ -49,7 +74,7 @@ const nodeTypes = [
     }
   }
 ] as {
-  name: "getRequest" | "postRequest" | "ifCondition",
+  name: "startNode" | "stopNode" | "getRequest" | "postRequest" | "ifCondition",
   component: React.FC<unknown>,
   data?: GetRequestNodeData | PostRequestNodeData | IfConditionNodeData | NodeData,
   connecting: {
@@ -81,24 +106,11 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
       id: '458fe167-1d24-44c8-85f6-1ccccfcbca9f',
       position: { x: 0, y: 0 },
       data: {
-        label: "Get Request",
-        url: "https://example.com/billing",
-        updateNodeData
+        label: "Start Node"
       },
-      type: "getRequest",
-      connectable: true
-    },
-    {
-      id: 'add1ff79-911d-40c7-9400-3ed2f266cb5f',
-      position: { x: 0, y: 100 },
-      data: {
-        label: "Post Request",
-        url: 'https://example.com/checkout',
-        updateNodeData
-      },
-      type: 'postRequest',
-      connectable: true
-    },
+      type: "startNode",
+      connectable: true,
+    }
   ];
 
   const initialEdges: Edge[] = [
@@ -120,7 +132,6 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
 
   function createNodeTree(nodes: CustomNode[], edges: CustomEdge[]): TreeNode[] {
     const nodesMap: { [key: string]: TreeNode } = nodes.reduce((acc, node) => {
-
       const data = node.data as GetRequestNodeData | PostRequestNodeData | IfConditionNodeData;
 
       const treeNode: TreeNode = {
@@ -146,18 +157,17 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
       }
 
       if (parent.type === 'ifCondition') {
-        // Distinguish between True and False children based on the sourceHandle
+        // Distinguish between True and False children (based on the sourceHandle)
         const conditionType = edge.sourceHandle === 'true' ? 'trueChildren' : 'falseChildren';
-        parent.conditions![conditionType].push(child); // Use ! to assert conditions property exists
+        parent.conditions![conditionType].push(child);
       } else {
         parent.children.push(child);
       }
     });
 
-    return nodes.filter(node => !edges.some(edge => edge.target === node.id)).map(node => nodesMap[node.id]);
+    const rootNodeId = nodes.find(node => node.type === 'startNode' && !edges.some(edge => edge.target === node.id))?.id;
+    return rootNodeId ? [nodesMap[rootNodeId]] : []; // Ensure the tree starts with a startNode (if exists)
   }
-
-
 
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
@@ -166,10 +176,22 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
 
       const unconnectedNodes = allNodes.filter(node => !allEdges.some(edge => edge.source === node.id || edge.target === node.id));
 
-      // console.log('save', reactFlowInstance.toObject());
       if (unconnectedNodes.length > 0) {
-        console.log('unconnectedNodes', unconnectedNodes);
+        console.log('Unconnected Nodes:', unconnectedNodes);
+        toast.error('All nodes must be connected to each other');
         return; // Prevent saving if there are unconnected nodes
+      }
+
+      const startNodes = allNodes.filter(node => node.type === 'startNode');
+      if (startNodes.length !== 1) {
+        toast.error('There must be exactly one start node.');
+        return; // Ensure there is exactly one startNode
+      }
+
+      const startNodeIsRoot = !allEdges.some(edge => edge.target === startNodes[0].id);
+      if (!startNodeIsRoot) {
+        toast.error('The start node must not have any incoming edges.');
+        return; // Ensure startNode has no incoming edges
       }
 
       const ifConditionNodes = allNodes.filter(node => node.type === 'ifCondition');
@@ -181,13 +203,16 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
 
       if (invalidIfConditions.length > 0) {
         console.log('Invalid If Conditions:', invalidIfConditions);
-        return; // Prevent saving if any If Condition node is incorrectly connected
+        toast.error('Each IF condition must have both TRUE and FALSE paths connected.');
+        return;
       }
 
       const rootNodeTrees = createNodeTree(allNodes, allEdges);
-      console.log('Root Node Trees:', rootNodeTrees);
+
+      return {testPlan: rootNodeTrees, reactFlow: reactFlowInstance.toObject()};
     }
   }, [reactFlowInstance]);
+
 
   // Access onSave function from parent component
   useImperativeHandle(ref, () => ({
@@ -237,12 +262,18 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
         return;
       }
 
+      if (type === 'startNode' && reactFlowInstance.getNodes().some(node => node.type === 'startNode')) {
+        toast.error('Only one start node is allowed.');
+        return;
+      }
+
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
       const nodeType = getNodeType(type);
+      nodeType?.component
 
       if (!nodeType) {
         console.warn('nodeType not available');

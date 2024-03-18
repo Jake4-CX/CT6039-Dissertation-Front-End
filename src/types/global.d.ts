@@ -18,6 +18,9 @@ interface IfConditionNodeData extends NodeData {
   value: string
 }
 
+interface StartNodeData extends NodeData {
+}
+
 interface CustomNodeProps {
   data: NodeData;
 }

@@ -1,16 +1,21 @@
 import TestEditorSidebarComponent from "@/components/flow/testEditorSidebar";
 import TestEditorComponent from "@/components/flow/testEditor";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import DefaultLayout from "@/layouts/defaultLayout";
 import { useParams } from "react-router-dom";
 import { useRef } from "react";
+import toast from "react-hot-toast";
+import { ReactFlowJsonObject } from "reactflow";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { updateTestPlan } from "@/api/tests";
+import { AxiosResponse } from "axios";
 
 const EditLoadTestPage: React.FC = () => {
 
   const { loadTestId } = useParams<{ loadTestId: string }>();
 
-  const testEditorRef = useRef<{onSave: () => void}>(null);
+  const testEditorRef = useRef<{ onSave: () => { testPlan: TreeNode[], reactFlow: ReactFlowJsonObject<unknown, unknown> } | undefined }>(null);
 
   // const data = [
   //   { id: "1", name: "Unread" },
@@ -79,11 +84,43 @@ const EditLoadTestPage: React.FC = () => {
 
   // const [content, setContent] = useState("Admin Page")
 
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["updateTestPlan"],
+    mutationFn: updateTestPlan,
+    onSuccess: (data: AxiosResponse) => {
+      toast.success("Test updated successfully");
+      console.log("Test Updated", data);
+    },
+    onError: (data: AxiosResponse) => {
+      toast.error("Failed to update test");
+      console.error("Test Update Failed", data);
+    }
+  });
+
   const handleSave = () => {
     const testEditor = testEditorRef.current;
-    if (testEditor) {
-      testEditor.onSave();
+    if (!testEditor || loadTestId === undefined) {
+      toast.error("Test editor not available");
+      return;
     }
+    const data = testEditor.onSave();
+
+    if (data === undefined) {
+      return;
+    }
+
+    if (data.testPlan.length === 0) {
+      toast.error("Test is empty");
+      return;
+    }
+
+    console.log("Test Plan", data.testPlan);
+    console.log("React Flow", data.reactFlow);
+    mutate({
+      id: loadTestId,
+      testPlan: data.testPlan,
+      reactFlow: data.reactFlow
+    });
   }
 
 
@@ -91,8 +128,14 @@ const EditLoadTestPage: React.FC = () => {
     <DefaultLayout>
       <p>Load Test ID: {loadTestId}</p>
       <div className="w-full flex items-end">
-        <Button className="ml-auto" size="sm" variant="default" onClick={handleSave}>
-          Save Test
+        <Button className="ml-auto" size="sm" variant="default" onClick={handleSave} disabled={isPending}>
+          {
+            isPending ? (
+              <span>Saving Test</span>
+            ) : (
+              <span>Save Test</span>
+            )
+          }
         </Button>
       </div>
       <div className="flex flex-col md:flex-row space-y-6 md:space-x-6 md:space-y-0">

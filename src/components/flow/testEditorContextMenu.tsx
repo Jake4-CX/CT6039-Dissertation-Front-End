@@ -8,8 +8,9 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { useCallback } from "react";
+import toast from "react-hot-toast";
 import { useReactFlow } from "reactflow";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 type TestEditorContextMenuComponentProps = {
   children: React.ReactNode,
@@ -19,7 +20,7 @@ type TestEditorContextMenuComponentProps = {
 
 const TestEditorContextMenuComponent: React.FC<TestEditorContextMenuComponentProps> = ({ children, nodeId, nodeName }) => {
 
-  const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
+  const { getNode, getNodes, setNodes, addNodes, setEdges } = useReactFlow();
 
   const duplicateNode = useCallback(() => {
     const node = getNode(nodeId);
@@ -29,13 +30,18 @@ const TestEditorContextMenuComponent: React.FC<TestEditorContextMenuComponentPro
       return;
     }
 
+    if (node.type === 'startNode' && getNodes().some(node => node.type === 'startNode')) {
+      toast.error('Only one start node is allowed.');
+      return;
+    }
+
     const position = {
       x: node.position.x + 50,
       y: node.position.y + 50,
     };
 
     addNodes({ ...node, id: uuidv4(), data: { ...node.data, label: `${node.data.label} (copy)` }, position });
-  }, [nodeId, getNode, addNodes]);
+  }, [getNode, nodeId, getNodes, addNodes]);
 
   const deleteNode = useCallback(() => {
     setNodes((nodes) => nodes.filter((node) => node.id !== nodeId));

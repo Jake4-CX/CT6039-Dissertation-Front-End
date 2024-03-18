@@ -30,7 +30,7 @@ const TestEditorSidebarComponent: React.FC = () => {
               <div
                 className="w-full h-[2rem] bg-background border-green-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
                 draggable
-                onDragStart={(event) => onDragStart(event, 'start')}
+                onDragStart={(event) => onDragStart(event, 'startNode')}
               >
                 <span className="h-full w-[2rem] bg-green-500 rounded-l-sm flex items-center justify-center">
                   <Play className="h-4 w-4 text-muted" />
@@ -40,7 +40,7 @@ const TestEditorSidebarComponent: React.FC = () => {
               <div
                 className="w-full h-[2rem] bg-background border-red-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
                 draggable
-                onDragStart={(event) => onDragStart(event, 'stop')}
+                onDragStart={(event) => onDragStart(event, 'stopNode')}
               >
                 <span className="h-full w-[2rem] bg-red-500 rounded-l-sm flex items-center justify-center">
                   <Octagon className="h-4 w-4 text-muted" />

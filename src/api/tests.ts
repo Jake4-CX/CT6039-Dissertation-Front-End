@@ -1,3 +1,4 @@
+import { ReactFlowJsonObject } from "reactflow";
 import api from "../api";
 
 export function getTests() {
@@ -18,4 +19,11 @@ export function startTest(id: string) {
 
 export function stopTest(id: string) {
   return api.get(`/load-tests/${id}/stop`);
+}
+
+export function updateTestPlan(data: { id: string, testPlan: TreeNode[], reactFlow: ReactFlowJsonObject<unknown, unknown> }) {
+  return api.put(`/load-tests/${data.id}/plan`, {
+    testPlan: data.testPlan,
+    reactFlow: data.reactFlow
+  });
 }

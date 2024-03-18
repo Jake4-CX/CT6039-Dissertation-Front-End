@@ -1,5 +1,5 @@
 import React, { ForwardRefRenderFunction, forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import ReactFlow, { Background, Controls, MiniMap, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, Node, Edge, OnNodesChange, OnEdgesChange, OnConnect, ReactFlowInstance } from 'reactflow';
+import ReactFlow, { Background, Controls, MiniMap, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, Node, Edge, OnNodesChange, OnEdgesChange, OnConnect, ReactFlowInstance, ReactFlowJsonObject, Viewport, BackgroundVariant } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
 
 import 'reactflow/dist/style.css';
@@ -95,31 +95,17 @@ interface TestEditorComponentHandles {
 }
 
 interface TestEditorComponentProps {
-
+  reactFlowPlan: ReactFlowJsonObject<unknown, unknown>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, TestEditorComponentProps> = (_props, ref) => {
-
-  const initialNodes: Node[] = [
-    {
-      id: '458fe167-1d24-44c8-85f6-1ccccfcbca9f',
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Start Node"
-      },
-      type: "startNode",
-      connectable: true,
-    }
-  ];
-
-  const initialEdges: Edge[] = [
-    // { id: 'e1-2', source: '1', target: '2', animated: true }
-  ];
+const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, TestEditorComponentProps> = (props, ref) => {
 
   const reactFlowRef = useRef(null);
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const [nodes, setNodes] = useState<Node[]>(props.reactFlowPlan.nodes);
+  const [edges, setEdges] = useState<Edge[]>(props.reactFlowPlan.edges);
+  const [viewport, setViewport] = useState<Viewport>(props.reactFlowPlan.viewport);
+
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
 
   function updateNodeData(nodeId: string, newData: Partial<unknown>) {
@@ -209,7 +195,7 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
 
       const rootNodeTrees = createNodeTree(allNodes, allEdges);
 
-      return {testPlan: rootNodeTrees, reactFlow: reactFlowInstance.toObject()};
+      return { testPlan: rootNodeTrees, reactFlow: reactFlowInstance.toObject() };
     }
   }, [reactFlowInstance]);
 
@@ -308,13 +294,14 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
           onInit={setReactFlowInstance}
           onDrop={onDrop}
           onDragOver={onDragOver}
-          fitView
+          defaultViewport={viewport}
+          onViewportChange={setViewport}
           deleteKeyCode={["Delete", "Backspace"]}
           className='w-full'
         >
           <Controls />
           <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
       </ReactFlowProvider>
     </>

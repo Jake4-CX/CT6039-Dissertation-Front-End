@@ -2,14 +2,15 @@ import TestEditorSidebarComponent from "@/components/flow/testEditorSidebar";
 import TestEditorComponent from "@/components/flow/testEditor";
 import { Card } from "@/components/ui/card";
 import DefaultLayout from "@/layouts/defaultLayout";
-import { useParams } from "react-router-dom";
-import { useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { ReactFlowJsonObject } from "reactflow";
+import { Node, Edge, ReactFlowJsonObject, Viewport } from "reactflow";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { updateTestPlan } from "@/api/tests";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getTestById, updateTestPlan } from "@/api/tests";
 import { AxiosResponse } from "axios";
+import { RefreshCw } from "lucide-react";
 
 const EditLoadTestPage: React.FC = () => {
 
@@ -17,72 +18,46 @@ const EditLoadTestPage: React.FC = () => {
 
   const testEditorRef = useRef<{ onSave: () => { testPlan: TreeNode[], reactFlow: ReactFlowJsonObject<unknown, unknown> } | undefined }>(null);
 
-  // const data = [
-  //   { id: "1", name: "Unread" },
-  //   { id: "2", name: "Threads" },
-  //   {
-  //     id: "3",
-  //     name: "Chat Rooms",
-  //     children: [
-  //       { id: "c1", name: "General" },
-  //       { id: "c2", name: "Random" },
-  //       { id: "c3", name: "Open Source Projects" },
-  //     ],
-  //   },
-  //   {
-  //     id: "4",
-  //     name: "Direct Messages",
-  //     children: [
-  //       {
-  //         id: "d1",
-  //         name: "Alice",
-  //         children: [
-  //           { id: "d11", name: "Alice2", icon: Layout },
-  //           { id: "d12", name: "Bob2" },
-  //           { id: "d13", name: "Charlie2" },
-  //         ],
-  //       },
-  //       { id: "d2", name: "Bob", icon: Layout },
-  //       { id: "d3", name: "Charlie" },
-  //     ],
-  //   },
-  //   {
-  //     id: "5",
-  //     name: "Direct Messages",
-  //     children: [
-  //       {
-  //         id: "e1",
-  //         name: "Alice",
-  //         children: [
-  //           { id: "e11", name: "Alice2" },
-  //           { id: "e12", name: "Bob2" },
-  //           { id: "e13", name: "Charlie2" },
-  //         ],
-  //       },
-  //       { id: "e2", name: "Bob" },
-  //       { id: "e3", name: "Charlie" },
-  //     ],
-  //   },
-  //   {
-  //     id: "6",
-  //     name: "Direct Messages",
-  //     children: [
-  //       {
-  //         id: "f1",
-  //         name: "Alice",
-  //         children: [
-  //           { id: "f11", name: "Alice2" },
-  //           { id: "f12", name: "Bob2" },
-  //           { id: "f13", name: "Charlie2" },
-  //         ],
-  //       },
-  //       { id: "f2", name: "Bob" },
-  //       { id: "f3", name: "Charlie" },
-  //     ],
-  //   },
-  // ];
+  const navigate = useNavigate();
 
-  // const [content, setContent] = useState("Admin Page")
+  const loadTest = useQuery({
+    queryKey: [`loadTest/${loadTestId}`],
+    staleTime: 1000 * 60 * 5,
+    queryFn: async () => {
+      if (!loadTestId) return;
+
+      const loadTestResponse = await getTestById(loadTestId);
+
+      return loadTestResponse.data as LoadTestModel;
+    }
+  });
+
+  if (loadTest.isError) {
+    toast.error("Failed to load test");
+    navigate("/");
+  }
+
+  const [reactFlowPlan, setReactFlowPlan] = useState<ReactFlowJsonObject<unknown, unknown> | undefined>(undefined);
+
+  useEffect(() => {
+
+    if (loadTest.data) {
+      const reactFlowPlan: { nodes: Node[], edges: Edge[], viewport: Viewport } = JSON.parse(loadTest.data.testPlan.reactFlowPlan);
+
+      console.log("React Flow Plan", reactFlowPlan);
+
+      setReactFlowPlan({
+        edges: reactFlowPlan.edges,
+        nodes: reactFlowPlan.nodes,
+        viewport: {
+          zoom: reactFlowPlan.viewport.zoom,
+          x: reactFlowPlan.viewport.x,
+          y: reactFlowPlan.viewport.y
+        }
+      });
+    }
+
+  }, [loadTest.data])
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["updateTestPlan"],
@@ -126,7 +101,6 @@ const EditLoadTestPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <p>Load Test ID: {loadTestId}</p>
       <div className="w-full flex items-end">
         <Button className="ml-auto" size="sm" variant="default" onClick={handleSave} disabled={isPending}>
           {
@@ -139,18 +113,21 @@ const EditLoadTestPage: React.FC = () => {
         </Button>
       </div>
       <div className="flex flex-col md:flex-row space-y-6 md:space-x-6 md:space-y-0">
-        {/* <Tree
-          data={data}
-          className="flex-shrink-0 w-[200px] h-[460px] border-[1px]"
-          initialSlelectedItemId="f12"
-          onSelectChange={(item) => setContent(item?.name ?? "")}
-          folderIcon={Folder}
-          itemIcon={Workflow}
-        /> */}
         <TestEditorSidebarComponent />
 
         <Card className="w-full h-[460px]">
-          <TestEditorComponent ref={testEditorRef} />
+          {
+            reactFlowPlan ? (
+              <div className="w-full h-full flex flex-col justify-center items-center space-y-1 bg-gray-100/40 dark:bg-gray-800/40">
+                <TestEditorComponent ref={testEditorRef} reactFlowPlan={reactFlowPlan} />
+              </div>
+            ) : (
+              <div className="w-full h-full flex flex-col justify-center items-center space-y-1 bg-gray-100/40 dark:bg-gray-800/40">
+                <RefreshCw className="animate-spin w-6 h-6" />
+                <p className="text-muted-foreground text-sm font-normal">loading test plan</p>
+              </div>
+            )
+          }
         </Card>
       </div>
     </DefaultLayout>

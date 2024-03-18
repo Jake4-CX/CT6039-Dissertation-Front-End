@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input"
 import { useState } from 'react';
 import { TbPlus } from 'react-icons/tb';
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -37,6 +37,8 @@ const formSchema = z.object({
 const CreateTestModal: React.FC = () => {
   const [open, setOpen] = useState(false);
 
+  const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,9 +48,9 @@ const CreateTestModal: React.FC = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    
+
     mutate({
-      testName: values.testName
+      name: values.testName
     });
   }
 
@@ -57,6 +59,8 @@ const CreateTestModal: React.FC = () => {
     mutationFn: createTest,
     onSuccess: () => {
       toast.success("Test created successfully");
+      queryClient.invalidateQueries({ queryKey: [`loadTests`] });
+      setOpen(false);
     },
     onError: () => {
       toast.error("Failed to create test");

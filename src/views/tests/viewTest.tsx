@@ -36,7 +36,7 @@ const ViewLoadTestPage: React.FC = () => {
 
       const loadTestResponse = await getTestById(loadTestId);
 
-      return loadTestResponse.data as LoadTest;
+      return loadTestResponse.data as LoadTestModel;
     }
   });
 

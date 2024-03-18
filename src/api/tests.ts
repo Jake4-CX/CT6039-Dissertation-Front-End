@@ -13,6 +13,10 @@ export function createTest(data: any) {
   return api.post("/load-tests", data);
 }
 
+export function deleteTest(id: string) {
+  return api.delete(`/load-tests/${id}`);
+}
+
 export function startTest(id: string) {
   return api.get(`/load-tests/${id}/start`);
 }

@@ -28,7 +28,7 @@ const EditLoadTestPage: React.FC = () => {
 
       const loadTestResponse = await getTestById(loadTestId);
 
-      return loadTestResponse.data as LoadTestModel;
+      return (loadTestResponse.data as ViewLoadTestModal);
     }
   });
 
@@ -42,7 +42,7 @@ const EditLoadTestPage: React.FC = () => {
   useEffect(() => {
 
     if (loadTest.data) {
-      const reactFlowPlan: { nodes: Node[], edges: Edge[], viewport: Viewport } = JSON.parse(loadTest.data.testPlan.reactFlowPlan);
+      const reactFlowPlan: { nodes: Node[], edges: Edge[], viewport: Viewport } = JSON.parse(loadTest.data.test.testPlan.reactFlowPlan);
 
       console.log("React Flow Plan", reactFlowPlan);
 

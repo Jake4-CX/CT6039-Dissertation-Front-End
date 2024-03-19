@@ -1,17 +1,26 @@
+interface ViewLoadTestModal {
+  test: LoadTestModel,
+  testMetrics: Map<number, Map<number, ResponseFragment[]>>
+}
+
+interface ResponseFragment {
+  statusCode: number;
+  responseTime: number;
+}
+
 interface LoadTestModel {
-  id: string,
+  id: number,
   uuid: string,
   name: string,
-  state: "PENDING" | "RUNNING" | "COMPLETED" | "CANCELLED",
   testPlan: LoadTestPlanModel
-  loadTests: LoadTestTestsModel,
+  loadTests: LoadTestTestsModel[],
   createdAt: string,
   updatedAt: string,
   deletedAt: string | null
 }
 
 interface LoadTestPlanModel {
-  id: string,
+  id: number,
   loadTestModelId: string,
   reactFlowPlan: string,
   testPlan: string,
@@ -21,10 +30,11 @@ interface LoadTestPlanModel {
 }
 
 interface LoadTestTestsModel {
-  id: string,
+  id: number,
   loadTestModelId: string,
   duration: number,
   virtualUsers: number,
+  state: "PENDING" | "RUNNING" | "COMPLETED" | "CANCELLED",
   loadTestType: "LOAD" | "STRESS" | "SPIKE" | "SOAK",
   testMetrics: LoadTestMetricsModel,
   createdAt: string,
@@ -33,7 +43,7 @@ interface LoadTestTestsModel {
 }
 
 interface LoadTestMetricsModel {
-  id: string,
+  id: number,
   loadTestTestsModelId: string,
   totalRequests: number,
   successfulRequests: number,

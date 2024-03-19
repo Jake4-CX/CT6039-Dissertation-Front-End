@@ -44,9 +44,10 @@ const formSchema = z.object({
 
 interface StartTestModalProps {
   loadTestId: string | undefined;
+  isTestRunning: boolean;
 }
 
-const StartTestModal: React.FC<StartTestModalProps> = ({ loadTestId }) => {
+const StartTestModal: React.FC<StartTestModalProps> = ({ loadTestId, isTestRunning }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -91,7 +92,7 @@ const StartTestModal: React.FC<StartTestModalProps> = ({ loadTestId }) => {
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild className="">
-          <Button size="sm" variant={"outline"} disabled={false || isPending}>
+          <Button size="sm" variant={"outline"} disabled={isTestRunning || isPending}>
             {
               isPending ? (
                 <>

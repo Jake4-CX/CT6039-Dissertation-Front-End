@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DefaultLayout from "@/layouts/defaultLayout";
 import { faker } from "@faker-js/faker";
 import { ClockIcon, HistoryIcon, InfoIcon, RefreshCw, ServerIcon, UsersIcon } from "lucide-react";
@@ -10,9 +9,11 @@ import { Link, useParams } from "react-router-dom";
 import moment from "moment";
 import { Line, LineChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getTestById, startTest, stopTest } from "@/api/tests";
+import { getTestById, stopTest } from "@/api/tests";
 import toast from "react-hot-toast";
 import StartTestModal from "@/components/views/viewTest/modals/startTest";
+import convertToMaps from "@/utils/convertToMaps";
+import TestsTableComponent from "@/components/views/viewTest/tables/testHistory";
 
 
 function generateSecond() {
@@ -37,19 +38,7 @@ const ViewLoadTestPage: React.FC = () => {
 
       const loadTestResponse = await getTestById(loadTestId);
 
-      return loadTestResponse.data as LoadTestModel;
-    }
-  });
-
-  const { mutate: startTestMutate, isPending: isStartTestPending } = useMutation({
-    mutationKey: [`startTest/${loadTestId}`],
-    mutationFn: startTest,
-    onSuccess: () => {
-      toast.success("Test started successfully");
-      queryClient.invalidateQueries({ queryKey: [`loadTest/${loadTestId}`] });
-    },
-    onError: () => {
-      toast.error("Failed to start test");
+      return loadTestResponse.data as ViewLoadTestModal;
     }
   });
 
@@ -76,6 +65,32 @@ const ViewLoadTestPage: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const [isRunning, setIsRunning] = useState(false);
+  const [runningTest, setRunningTest] = useState<LoadTestTestsModel | undefined>(undefined);
+  const [testMetrics, setTestMetrics] = useState<{ metrics: LoadTestMetricsModel, testFragments: Map<number, ResponseFragment[]> | undefined } | undefined>(undefined);
+
+  useEffect(() => {
+    if (!loadTest.data) return;
+
+    for (const test of loadTest.data.test.loadTests) {
+      if (test.state === "RUNNING") {
+        setIsRunning(true);
+        setRunningTest(test);
+
+        const testFragments = convertToMaps(loadTest.data.testMetrics).get(test.id);
+
+        if (!testFragments) return;
+
+        setTestMetrics({ metrics: test.testMetrics, testFragments: testFragments });
+
+        return;
+      }
+    }
+
+    setIsRunning(false);
+    setRunningTest(undefined);
+  }, [loadTest.data]);
+
   return (
     <DefaultLayout className="">
       {
@@ -88,10 +103,10 @@ const ViewLoadTestPage: React.FC = () => {
             <Card className="w-full min-h-[32rem]">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <div className="flex flex-col">
-                  <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">{loadTest.data.name}</h3>
+                  <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">{loadTest.data.test.name}</h3>
                   <span className="text-muted-foreground text-sm font-normal space-x-1">
                     <span className="font-semibold">Last updated:</span>
-                    <span>{moment(loadTest.dataUpdatedAt).fromNow()}</span>
+                    <span>{moment(loadTest.data.test.updatedAt).fromNow()}</span>
                   </span>
                 </div>
                 <Link to={`/test/${loadTestId}/edit`}>
@@ -119,20 +134,8 @@ const ViewLoadTestPage: React.FC = () => {
                         {/* Buttons - Start Stop, same row */}
                         <div className="flex flex-row justify-between items-center">
                           <div className="flex flex-row space-x-2">
-                            {/* <Button size="sm" variant={"outline"} disabled={loadTest.data.state == "RUNNING"} onClick={startTestButton}>
-                              {
-                                isStartTestPending ? (
-                                  <>
-                                    <RefreshCw className="animate-spin w-4 h-4 mr-2" />
-                                    Starting
-                                  </>
-                                ) : (
-                                  "Start"
-                                )
-                              }
-                            </Button> */}
-                            <StartTestModal loadTestId={loadTestId} />
-                            <Button size="sm" variant={"outline"} disabled={loadTest.data.state !== "RUNNING"} onClick={stopTestButton}>
+                            <StartTestModal loadTestId={loadTestId} isTestRunning={isRunning} />
+                            <Button size="sm" variant={"outline"} disabled={isRunning == false} onClick={stopTestButton}>
                               {
                                 isStopTestPending ? (
                                   <>
@@ -150,44 +153,52 @@ const ViewLoadTestPage: React.FC = () => {
                       </CardHeader>
                     </Card>
 
-                    <Card>
-                      <CardHeader className="p-4">
+                    {
+                      runningTest ? (
+                        <>
+                          <Card>
+                            <CardHeader className="p-4">
 
-                        <div className="flex items-center space-x-3">
-                          <InfoIcon className="h-6 w-6 text-gray-500" />
-                          <div className="flex flex-col">
-                            <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">Test Details</h3>
-                            <p className="text-muted-foreground text-sm font-normal">Subheading here</p>
-                          </div>
-                        </div>
+                              <div className="flex items-center space-x-3">
+                                <InfoIcon className="h-6 w-6 text-gray-500" />
+                                <div className="flex flex-col">
+                                  <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">Running Test Details</h3>
+                                  <p className="text-muted-foreground text-sm font-normal">Subheading here</p>
+                                </div>
+                              </div>
 
-                      </CardHeader>
-                      <CardContent className="p-4">
-                        <div className="grid gap-2">
-                          <div className="flex items-center space-x-2">
-                            <ClockIcon className="h-4 w-4 opacity-50" />
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              <span className="font-semibold mr-1">Started:</span>
-                              2 minutes ago
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <UsersIcon className="h-4 w-4 opacity-50" />
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              <span className="font-semibold mr-1">Virtual Users:</span>
-                              100
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <ServerIcon className="h-4 w-4 opacity-50" />
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              <span className="font-semibold mr-1">Server Region:</span>
-                              us-east-1
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                            </CardHeader>
+                            <CardContent className="p-4">
+                              <div className="grid gap-2">
+                                <div className="flex items-center space-x-2">
+                                  <ClockIcon className="h-4 w-4 opacity-50" />
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="font-semibold mr-1">Started:</span>
+                                    {moment(runningTest.createdAt).fromNow()}
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <UsersIcon className="h-4 w-4 opacity-50" />
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="font-semibold mr-1">Virtual Users:</span>
+                                    {runningTest.virtualUsers}
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <ServerIcon className="h-4 w-4 opacity-50" />
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="font-semibold mr-1">Duration:</span>
+                                    {runningTest.duration / 1000} seconds
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </>
+                      ) : (
+                        <></>
+                      )
+                    }
 
                   </div>
 
@@ -196,8 +207,8 @@ const ViewLoadTestPage: React.FC = () => {
             </Card>
 
             {/* Run history card - lists all previous runs, along with performance test type (Load, Spike, Soak etc). Shown within a table */}
-            <Card className="mt-4">
-              <CardHeader className="p-4">
+            <Card className="w-full">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
 
                 <div className="flex items-center space-x-3">
                   <HistoryIcon className="h-6 w-6 text-gray-500" />
@@ -209,32 +220,7 @@ const ViewLoadTestPage: React.FC = () => {
 
               </CardHeader>
               <CardContent className="p-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Run ID</TableHead>
-                      <TableHead>Test Type</TableHead>
-                      <TableHead>Start Time</TableHead>
-                      <TableHead>End Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Duration</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[...Array(3)].map((_, index) => (
-                      <>
-                        <TableRow key={index}>
-                          <TableCell>{index}</TableCell>
-                          <TableCell className="font-medium">Spike</TableCell>
-                          <TableCell>2 minutes ago</TableCell>
-                          <TableCell>Just now</TableCell>
-                          <TableCell>Running</TableCell>
-                          <TableCell>2 minutes</TableCell>
-                        </TableRow>
-                      </>
-                    ))}
-                  </TableBody>
-                </Table>
+                <TestsTableComponent loadTests={loadTest} />
               </CardContent>
             </Card>
           </>
@@ -247,15 +233,6 @@ const ViewLoadTestPage: React.FC = () => {
       }
     </DefaultLayout>
   )
-
-  function startTestButton() {
-    if (!loadTestId) {
-      toast.error("Invalid test ID");
-      return;
-    }
-
-    startTestMutate(loadTestId);
-  }
 
   function stopTestButton() {
     if (!loadTestId) {

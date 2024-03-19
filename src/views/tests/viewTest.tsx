@@ -12,6 +12,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTestById, startTest, stopTest } from "@/api/tests";
 import toast from "react-hot-toast";
+import StartTestModal from "@/components/views/viewTest/modals/startTest";
 
 
 function generateSecond() {
@@ -118,7 +119,7 @@ const ViewLoadTestPage: React.FC = () => {
                         {/* Buttons - Start Stop, same row */}
                         <div className="flex flex-row justify-between items-center">
                           <div className="flex flex-row space-x-2">
-                            <Button size="sm" variant={"outline"} disabled={loadTest.data.state == "RUNNING"} onClick={startTestButton}>
+                            {/* <Button size="sm" variant={"outline"} disabled={loadTest.data.state == "RUNNING"} onClick={startTestButton}>
                               {
                                 isStartTestPending ? (
                                   <>
@@ -129,7 +130,8 @@ const ViewLoadTestPage: React.FC = () => {
                                   "Start"
                                 )
                               }
-                            </Button>
+                            </Button> */}
+                            <StartTestModal loadTestId={loadTestId} />
                             <Button size="sm" variant={"outline"} disabled={loadTest.data.state !== "RUNNING"} onClick={stopTestButton}>
                               {
                                 isStopTestPending ? (

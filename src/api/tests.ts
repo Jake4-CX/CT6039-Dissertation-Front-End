@@ -17,8 +17,12 @@ export function deleteTest(id: string) {
   return api.delete(`/load-tests/${id}`);
 }
 
-export function startTest(id: string) {
-  return api.get(`/load-tests/${id}/start`);
+export function startTest(data: { id: string, duration: number, virtualUsers: number, loadTestType: string }) {
+  return api.post(`/load-tests/${data.id}/start`, {
+    duration: data.duration,
+    virtualUsers: data.virtualUsers,
+    loadTestType: data.loadTestType
+  });
 }
 
 export function stopTest(id: string) {

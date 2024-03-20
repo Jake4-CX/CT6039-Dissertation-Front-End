@@ -33,7 +33,7 @@ const TestsTableComponent: React.FC<TestsTableComponentProps> = ({ loadTests }) 
           {
             !loadTests || loadTests.isLoading ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center">
+                <TableCell colSpan={7} className="flex items-center justify-center">
                   <RefreshCw className="animate-spin w-6 h-6" />
                 </TableCell>
               </TableRow>
@@ -41,7 +41,7 @@ const TestsTableComponent: React.FC<TestsTableComponentProps> = ({ loadTests }) 
               loadTests.data ? (
                 loadTests.data.test.loadTests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center">
+                    <TableCell colSpan={7} className="text-center">
                       No tests found
                     </TableCell>
                   </TableRow>

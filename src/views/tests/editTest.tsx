@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Node, Edge, ReactFlowJsonObject, Viewport } from "reactflow";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTestById, updateTestPlan } from "@/api/tests";
 import { AxiosResponse } from "axios";
 import { RefreshCw } from "lucide-react";
@@ -19,6 +19,8 @@ const EditLoadTestPage: React.FC = () => {
   const testEditorRef = useRef<{ onSave: () => { testPlan: TreeNode[], reactFlow: ReactFlowJsonObject<unknown, unknown> } | undefined }>(null);
 
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   const loadTest = useQuery({
     queryKey: [`loadTest/${loadTestId}`],
@@ -65,6 +67,10 @@ const EditLoadTestPage: React.FC = () => {
     onSuccess: (data: AxiosResponse) => {
       toast.success("Test updated successfully");
       console.log("Test Updated", data);
+
+      queryClient.invalidateQueries({ queryKey: [`loadTest/${loadTestId}`] });
+
+      navigate(`/test/${loadTestId}`);
     },
     onError: (data: AxiosResponse) => {
       toast.error("Failed to update test");

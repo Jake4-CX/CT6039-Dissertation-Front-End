@@ -10,6 +10,7 @@ import PostRequestNode from './nodes/postRequest';
 import IfConditionNode from './nodes/ifCondition';
 import StartNode from './nodes/startNode';
 import StopNode from './nodes/stopNode';
+import DelayNode from './nodes/delayNode';
 import toast from 'react-hot-toast';
 
 const nodeTypes = [
@@ -72,11 +73,27 @@ const nodeTypes = [
       connectable: true,
       maxConnections: 1
     }
+  }, {
+    name: "delayNode",
+    component: DelayNode,
+    data: {
+      label: "Delay Flow",
+      delayType: "FIXED",
+      fixedDelay: 1000,
+      randomDelay: {
+        min: 1000,
+        max: 2000
+      }
+    },
+    connecting: {
+      connectable: true,
+      maxConnections: 1
+    }
   }
 ] as {
-  name: "startNode" | "stopNode" | "getRequest" | "postRequest" | "ifCondition",
+  name: "startNode" | "stopNode" | "getRequest" | "postRequest" | "ifCondition" | "delayNode",
   component: React.FC<unknown>,
-  data?: GetRequestNodeData | PostRequestNodeData | IfConditionNodeData | NodeData,
+  data?: GetRequestNodeData | PostRequestNodeData | IfConditionNodeData | DelayNodeData | NodeData,
   connecting: {
     connectable: boolean,
     maxConnections: number

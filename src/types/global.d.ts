@@ -1,6 +1,6 @@
 interface NodeData {
   label: string,
-  updateNodeData?: (nodeId: string, newData: Partial<NodeData | GetRequestNodeData | PostRequestNodeData | IfConditionNodeData>) => void
+  updateNodeData?: (nodeId: string, newData: Partial<NodeData | GetRequestNodeData | PostRequestNodeData | IfConditionNodeData | DelayNodeData>) => void
 }
 
 interface GetRequestNodeData extends NodeData {
@@ -19,6 +19,15 @@ interface IfConditionNodeData extends NodeData {
 }
 
 interface StartNodeData extends NodeData {
+}
+
+interface DelayNodeData extends NodeData {
+  delayType: "FIXED" | "RANDOM",
+  fixedDelay: number,
+  randomDelay: {
+    min: number,
+    max: number
+  }
 }
 
 interface CustomNodeProps {

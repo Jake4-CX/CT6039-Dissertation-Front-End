@@ -1,4 +1,4 @@
-import { IterationCcw, Network, Octagon, Play, Timer, Workflow } from "lucide-react";
+import { Network, Octagon, Play, Timer, Workflow } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -95,23 +95,12 @@ const TestEditorSidebarComponent: React.FC = () => {
               <div
                 className="w-full h-[2rem] bg-background border-gray-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
                 draggable
-                onDragStart={(event) => onDragStart(event, 'wait')}
+                onDragStart={(event) => onDragStart(event, 'delayNode')}
               >
                 <span className="h-full w-[2rem] bg-gray-500 rounded-l-sm flex items-center justify-center">
                   <Timer className="h-4 w-4 text-muted" />
                 </span>
-                <p className="text-base font-semibold text-foreground">WAIT</p>
-              </div>
-
-              <div
-                className="w-full h-[2rem] bg-background border-gray-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
-                draggable
-                onDragStart={(event) => onDragStart(event, 'break')}
-              >
-                <span className="h-full w-[2rem] bg-gray-500 rounded-l-sm flex items-center justify-center">
-                  <IterationCcw className="h-4 w-4 text-muted" />
-                </span>
-                <p className="text-base font-semibold text-foreground">BREAK</p>
+                <p className="text-base font-semibold text-foreground">DELAY</p>
               </div>
             </div>
           </CardContent>

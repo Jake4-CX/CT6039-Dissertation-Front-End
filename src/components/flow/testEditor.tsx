@@ -108,14 +108,6 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
 
-  function updateNodeData(nodeId: string, newData: Partial<unknown>) {
-    setNodes((prevNodes) =>
-      prevNodes.map((node) =>
-        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
-      )
-    );
-  }
-
   function createNodeTree(nodes: CustomNode[], edges: CustomEdge[]): TreeNode[] {
     const nodesMap: { [key: string]: TreeNode } = nodes.reduce((acc, node) => {
       const data = node.data as GetRequestNodeData | PostRequestNodeData | IfConditionNodeData;
@@ -270,7 +262,7 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
         id: uuidv4(),
         type,
         position,
-        data: { ...nodeType.data, updateNodeData },
+        data: nodeType.data,
         connectable: nodeType.connecting?.connectable ?? false
       };
 

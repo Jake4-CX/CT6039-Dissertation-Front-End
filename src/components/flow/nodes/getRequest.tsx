@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps, useReactFlow } from 'reactflow';
 import TestEditorContextMenuComponent from '../testEditorContextMenu';
 import DefaultHandle from '../handles/default';
 
@@ -53,16 +53,22 @@ const GetRequestNode: React.FC<NodeProps<GetRequestNodeData>> = (node) => {
 
 const EditGetRequestNode: React.FC<NodeProps<GetRequestNodeData>> = (node) => {
 
+  const { setNodes } = useReactFlow();
+
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(node.data.url);
 
+  function updateNodeData(nodeId: string, newData: Partial<unknown>) {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
+      )
+    );
+  }
+
   function handleSave() {
     console.log('Save changes');
-    if (node.data.updateNodeData) {
-      node.data.updateNodeData(node.id, { url });
-    } else {
-      console.log('updateNodeData not available');
-    }
+    updateNodeData(node.id, { url });
     setOpen(false);
   }
 

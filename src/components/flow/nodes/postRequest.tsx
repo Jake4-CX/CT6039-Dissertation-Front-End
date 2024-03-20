@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea';
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
-import { Handle, NodeProps, Position } from 'reactflow';
+import { Handle, NodeProps, Position, useReactFlow } from 'reactflow';
 import TestEditorContextMenuComponent from '../testEditorContextMenu';
 import DefaultHandle from '../handles/default';
 
@@ -54,17 +54,23 @@ const PostRequestNode: React.FC<NodeProps<PostRequestNodeData>> = (node) => {
 
 const EditPostRequestNode: React.FC<NodeProps<PostRequestNodeData>> = (node) => {
 
+  const { setNodes } = useReactFlow();
+
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(node.data.url);
   const [body, setBody] = useState(node.data.body);
 
+  function updateNodeData(nodeId: string, newData: Partial<unknown>) {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
+      )
+    );
+  }
+
   function handleSave() {
     console.log('Save changes');
-    if (node.data.updateNodeData) {
-      node.data.updateNodeData(node.id, { url, body });
-    } else {
-      console.log('updateNodeData not available');
-    }
+    updateNodeData(node.id, { url, body });
     setOpen(false);
   }
 

@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Handle, NodeProps, Position } from "reactflow";
+import { Handle, NodeProps, Position, useReactFlow } from "reactflow";
 import TestEditorContextMenuComponent from "../testEditorContextMenu";
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -60,15 +60,15 @@ const IfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => {
           <div className='grid grid-cols-2 gap-x-3'>
             <div className='flex flex-col'>
               <span className='text-primary text-[9px] font-bold uppercase'>Field</span>
-              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{ node.data.field ?? "Undefined" }</span>
+              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.field ?? "Undefined"}</span>
             </div>
             <div className='flex flex-col'>
               <span className='text-primary text-[9px] font-bold uppercase'>Condition</span>
-              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{ node.data.condition ?? "Undefined" }</span>
+              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.condition ?? "Undefined"}</span>
             </div>
             <div className='flex flex-col'>
               <span className='text-primary text-[9px] font-bold uppercase'>Value</span>
-              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{ node.data.value ?? "Undefined" }</span>
+              <span className='text-[8px] font-normal ml-1 line-clamp-1'>{node.data.value ?? "Undefined"}</span>
             </div>
           </div>
         </CardContent>
@@ -96,23 +96,31 @@ const IfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => {
 
 const EditIfConditionNode: React.FC<NodeProps<IfConditionNodeData>> = (node) => {
 
+  const { setNodes } = useReactFlow();
+
   const [open, setOpen] = useState(false);
   const [field, setField] = useState<string | undefined>(node.data.field);
   const [condition, setCondition] = useState<string | undefined>(node.data.condition);
   const [value, setValue] = useState<string | undefined>(node.data.value);
 
+
+  function updateNodeData(nodeId: string, newData: Partial<unknown>) {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
+      )
+    );
+  }
+
   function handleSave() {
     console.log('Save changes');
-    if (node.data.updateNodeData) {
-      if (field && condition && value) {
-        node.data.updateNodeData(node.id, { field, condition, value });
-      } else {
-        toast.error('Field, condition, and value are required');
-      }
+
+    if (field && condition && value) {
+      updateNodeData(node.id, { field, condition, value });
+      setOpen(false);
     } else {
-      console.log('updateNodeData not available');
+      toast.error('Field, condition, and value are required');
     }
-    setOpen(false);
   }
 
   return (

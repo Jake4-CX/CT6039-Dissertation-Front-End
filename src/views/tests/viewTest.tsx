@@ -31,8 +31,8 @@ const ViewLoadTestPage: React.FC = () => {
   const loadtestRedux = useAppSelector((state) => state.loadtestReduser);
   const dispatch = useDispatch<AppDispatch>();
 
-  const initialChartData = Array.from({ length: 60 }).map(() => ({
-    name: ``,
+  const initialChartData = Array.from({ length: 60 }).map((_, index) => ({
+    name: `${index} blank`,
     totalRequests: 0,
     averageLatency: 0,
   }));
@@ -300,7 +300,7 @@ const ViewLoadTestPage: React.FC = () => {
 
               </CardHeader>
               <CardContent className="p-4">
-                <TestsTableComponent loadTests={loadTest} />
+                <TestsTableComponent loadTests={loadTest.data} />
               </CardContent>
             </Card>
           </>
@@ -324,7 +324,7 @@ const ViewLoadTestPage: React.FC = () => {
   }
 }
 
-const CustomTooltip: React.FC<{ active: boolean, payload: { payload: { name: string, totalRequests: number, averageLatency: number } }[], label: string }> = ({ active, payload, label }) => {
+const CustomTooltip: React.FC<{ active: boolean, payload: { payload: { name: string, totalRequests: number, averageLatency: number | undefined } }[], label: string }> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <Card>
@@ -346,16 +346,22 @@ const CustomTooltip: React.FC<{ active: boolean, payload: { payload: { name: str
             <UsersIcon className="h-4 w-4 opacity-50" />
             <div className="text-sm text-gray-500 dark:text-gray-400">
               <span className="font-semibold mr-1">Requests:</span>
-              {payload[0].payload.totalRequests}
+              {payload[0].payload.totalRequests || 0}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <ServerIcon className="h-4 w-4 opacity-50" />
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-semibold mr-1">Average Latency:</span>
-              {payload[1].payload.averageLatency.toFixed(2)}ms
-            </div>
-          </div>
+          {
+            payload[0].payload.averageLatency !== undefined && payload[0].payload.averageLatency > 0 && (
+              <>
+                <div className="flex items-center space-x-2">
+                  <ServerIcon className="h-4 w-4 opacity-50" />
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold mr-1">Average Latency:</span>
+                    {(payload[0].payload.averageLatency).toFixed(2)}ms
+                  </div>
+                </div>
+              </>
+            )
+          }
         </CardContent>
       </Card>
     )

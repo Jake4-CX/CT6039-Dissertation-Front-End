@@ -2,14 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef, SortingState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
-import { UseQueryResult } from "@tanstack/react-query";
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
 interface TestsTableComponentProps {
-  loadTests: UseQueryResult<ViewLoadTestModal | undefined, Error>
+  loadTests: ViewLoadTestModal | undefined
 }
 
 export const columns: ColumnDef<LoadTestTestsModel>[] = [
@@ -28,7 +27,6 @@ export const columns: ColumnDef<LoadTestTestsModel>[] = [
     cell: ({ row }) => moment(row.original.createdAt).fromNow()
   },
   {
-    accessorKey: 'duration',
     header: 'End Time',
     cell: ({ row }) => moment(row.original.createdAt).add(row.original.duration, 'milliseconds').fromNow()
   },
@@ -60,7 +58,7 @@ const TestsTableComponent: React.FC<TestsTableComponentProps> = ({ loadTests }) 
 
 
   const table = useReactTable({
-    data: loadTests.data?.test.loadTests || [],
+    data: loadTests?.test.loadTests || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -109,7 +107,7 @@ const TestsTableComponent: React.FC<TestsTableComponentProps> = ({ loadTests }) 
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="flex items-center justify-center">
+              <TableCell colSpan={columns.length} className="flex items-center justify-center">
                 <RefreshCw className="animate-spin w-6 h-6" />
               </TableCell>
             </TableRow>

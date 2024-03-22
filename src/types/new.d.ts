@@ -54,3 +54,11 @@ interface LoadTestMetricsModel {
   updatedAt: string,
   deletedAt: string | null
 }
+
+// Socket.IO
+
+type TestMetricsEmit = {
+  test: LoadTestTestsModel,
+  testMetrics: TestMetricsSlice,
+  elapsedSeconds: number
+}

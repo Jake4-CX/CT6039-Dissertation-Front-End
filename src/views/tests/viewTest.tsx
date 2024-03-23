@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import DefaultLayout from "@/layouts/defaultLayout";
-import { Activity, ClockIcon, HistoryIcon, InfoIcon, RefreshCw, ServerIcon, UsersIcon } from "lucide-react";
+import { ClockIcon, HistoryIcon, InfoIcon, RefreshCw, ServerIcon, UsersIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TbEdit } from "react-icons/tb";
 import { Link, useParams } from "react-router-dom";
 import moment from "moment";
-import { Legend, Line, LineChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTestById, stopTest } from "@/api/tests";
 import toast from "react-hot-toast";
@@ -17,6 +16,7 @@ import SocketFactory from "@/components/factory/socketFactory";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { addLoadTest, addLoadTestsTest } from "@/redux/features/loadtest-slice";
+import RealtimeGraph from "@/components/views/viewTest/graphs/realtimeGraph";
 
 
 const ViewLoadTestPage: React.FC = () => {
@@ -37,7 +37,7 @@ const ViewLoadTestPage: React.FC = () => {
     averageLatency: 0,
   }));
 
-  const [chartData, setChartData] = useState<{ name: string, totalRequests: number, averageLatency: number }[]>(initialChartData);
+  const [chartData, setChartData] = useState<{ name: string, totalRequests: number, averageLatency: number | undefined }[]>(initialChartData);
 
   const loadTest = useQuery({
     queryKey: [`loadTest/${loadTestId}`],
@@ -70,17 +70,6 @@ const ViewLoadTestPage: React.FC = () => {
       toast.error("Failed to stop test");
     }
   });
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setChartData(currentChartData => {
-  //       const newData = [...currentChartData.slice(1), generateSecond()];
-  //       return newData;
-  //     });
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
 
   const [loadTestData, setLoadTestData] = useState<LoadTestModel | undefined>(undefined);
   const [isRunning, setIsRunning] = useState(false);
@@ -138,7 +127,7 @@ const ViewLoadTestPage: React.FC = () => {
     const chartDataTransformed = Array.from(secondsElapsed.entries()).map(([second, fragments]) => ({
       name: `${second}`,
       totalRequests: ((fragments || []).length),
-      averageLatency: (fragments || []).reduce((acc, curr) => acc + curr.responseTime, 0) / ((fragments || []).length || 0)
+      averageLatency: ((fragments || []).reduce((acc, curr) => acc + curr.responseTime, 0) / ((fragments || []).length || 0)) || 0
     }));
 
     if (chartDataTransformed.length < 60) {
@@ -185,26 +174,7 @@ const ViewLoadTestPage: React.FC = () => {
                 <div className="flex flex-col lg:flex-row space-y-4 lg:space-x-4 lg:space-y-0">
 
                   {/* Real-time graph */}
-                  <Card className="w-full h-[24rem] lg:min-w-[32rem] lg:h-[24rem]">
-                    {
-                      runningTest ? (
-                        <>
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData}>
-                              <Line type="monotone" dataKey="totalRequests" stroke="#8884d8" name="Total Requests" dot={false} strokeWidth={3} animationDuration={0} />
-                              <Line type="monotone" dataKey="averageLatency" stroke="#82ca9d" name="Average Latency" dot={false} strokeWidth={3} animationDuration={0} />
-                              <Tooltip content={<CustomTooltip />} />
-                              <Legend />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </>
-                      ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <p className="text-muted-foreground">No test running</p>
-                        </div>
-                      )
-                    }
-                  </Card>
+                  <RealtimeGraph runningTest={runningTest} chartData={chartData} />
 
                   {/* Details */}
                   <div className="flex flex-col space-y-3 w-full">
@@ -323,52 +293,5 @@ const ViewLoadTestPage: React.FC = () => {
     stopTestMutate(loadTestId);
   }
 }
-
-const CustomTooltip: React.FC<{ active: boolean, payload: { payload: { name: string, totalRequests: number, averageLatency: number | undefined } }[], label: string }> = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <Card>
-        <CardContent className="p-4 w-fit h-fit">
-          {
-            payload[0].payload.name !== "" && (
-              <>
-                <div className="flex items-center space-x-2">
-                  <Activity className="h-4 w-4 opacity-50" />
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-semibold mr-1">Time:</span>
-                    {payload[0].payload.name}s
-                  </div>
-                </div>
-              </>
-            )
-          }
-          <div className="flex items-center space-x-2">
-            <UsersIcon className="h-4 w-4 opacity-50" />
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-semibold mr-1">Requests:</span>
-              {payload[0].payload.totalRequests || 0}
-            </div>
-          </div>
-          {
-            payload[0].payload.averageLatency !== undefined && payload[0].payload.averageLatency > 0 && (
-              <>
-                <div className="flex items-center space-x-2">
-                  <ServerIcon className="h-4 w-4 opacity-50" />
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-semibold mr-1">Average Latency:</span>
-                    {(payload[0].payload.averageLatency).toFixed(2)}ms
-                  </div>
-                </div>
-              </>
-            )
-          }
-        </CardContent>
-      </Card>
-    )
-  }
-
-  return null;
-};
-
 
 export default ViewLoadTestPage;

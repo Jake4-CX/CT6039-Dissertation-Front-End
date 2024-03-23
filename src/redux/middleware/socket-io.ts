@@ -21,17 +21,17 @@ const SocketIOMiddleware: Middleware = (store) => {
           store.dispatch(connectionEstablished());
         });
 
-        socket.socket.on("connection", (message) => {
-          console.log(message); // "Successfully connected to WebSocket."
+        socket.socket.on("connection", () => {
+          // console.log(message); // "Successfully connected to WebSocket."
         });
 
         socket.socket.on("joinedRoom", (roomName: string) => {
-          console.log(roomName); // "Successfully subscribed to room."
+          // console.log(roomName); // "Successfully subscribed to room."
           next(joinRoom(roomName));
         });
 
         socket.socket.on("testDetails", (data: TestMetricsEmit) => {
-          console.log(data);
+          // console.log(data);
 
           if (data.elapsedSeconds === -1) {
             next(addLoadTestsTest(data.test));

@@ -21,7 +21,7 @@ interface LoadTestModel {
 
 interface LoadTestPlanModel {
   id: number,
-  loadTestModelId: string,
+  loadTestModelId: number,
   reactFlowPlan: string,
   testPlan: string,
   createdAt: string,
@@ -31,7 +31,7 @@ interface LoadTestPlanModel {
 
 interface LoadTestTestsModel {
   id: number,
-  loadTestModelId: string,
+  loadTestModelId: number,
   duration: number,
   virtualUsers: number,
   state: "PENDING" | "RUNNING" | "COMPLETED" | "CANCELLED",
@@ -44,7 +44,7 @@ interface LoadTestTestsModel {
 
 interface LoadTestMetricsModel {
   id: number,
-  loadTestTestsModelId: string,
+  loadTestTestsModelId: number,
   totalRequests: number,
   successfulRequests: number,
   failedRequests: number,

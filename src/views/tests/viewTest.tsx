@@ -114,7 +114,7 @@ const ViewLoadTestPage: React.FC = () => {
 
     if (!secondsElapsed) return;
 
-    console.log(secondsElapsed);
+    // console.log(secondsElapsed);
 
     const runningT = loadtestRedux.loadTestsTests[runningTest.id];
     if ((["PENDING", "RUNNING"].includes(runningTest.state)) && (!(["PENDING", "RUNNING"].includes(runningT.state)))) {

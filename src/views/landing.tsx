@@ -5,8 +5,72 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import OnGoingTestCard from "@/components/global/cards/ongoingTestCard";
 import CreateTestModal from "@/components/views/dashboard/modals/createTest";
 import TestsTableComponent from "@/components/views/dashboard/tables/tests";
+import { getTests } from "@/api/tests";
+import { useQuery } from "@tanstack/react-query";
+import { AppDispatch, useAppSelector } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { addLoadTest, addLoadTestsTest } from "@/redux/features/loadtest-slice";
+import { useEffect, useState } from "react";
+import SocketFactory from "@/components/factory/socketFactory";
 
 const LandingPage: React.FC = () => {
+
+  const socketRedux = useAppSelector((state) => state.socketReduser);
+  const loadtestRedux = useAppSelector((state) => state.loadtestReduser);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { socket } = SocketFactory.create();
+
+  const [activeTests, setActiveTests] = useState<{ test: LoadTestModel, activeTest: LoadTestTestsModel }[]>([]);
+
+  useQuery({
+    queryKey: [`loadTests`],
+    staleTime: 1000 * 60 * 5,
+    queryFn: async () => {
+
+      const testsResponse = await getTests();
+
+      const loadTests: LoadTestModel[] = testsResponse.data;
+
+      loadTests.forEach((test) => {
+        dispatch(addLoadTest(test));
+
+        test.loadTests.forEach((testTest) => {
+          dispatch(addLoadTestsTest(testTest));
+        });
+      });
+
+      return testsResponse.data as LoadTestModel[];
+    }
+  });
+
+  const [loadTests, setLoadTests] = useState<LoadTestModel[]>();
+
+  useEffect(() => {
+    function getActiveTests() {
+      const activeTests: { test: LoadTestModel, activeTest: LoadTestTestsModel }[] = [];
+
+      for (const test of Object.keys(loadtestRedux.loadTestsTests)) {
+        const loadTest = loadtestRedux.loadTestsTests[Number(test)];
+
+        // console.log(`Load test: ${loadTest.id}`);
+        if (loadTest.state === "RUNNING" || loadTest.state === "PENDING") {
+          if (!(socketRedux.rooms.includes(`loadTest:${loadTest.loadTestModelId}`))) {
+            socket.emit("subscribeTest", { testId: Number(loadTest.loadTestModelId) });
+          }
+          activeTests.push({ test: loadtestRedux.loadTests[loadTest.loadTestModelId], activeTest: loadTest });
+        }
+      }
+
+      return activeTests;
+    }
+
+    if (Object.keys(loadtestRedux.loadTests).length == 0) return;
+    setLoadTests(Object.keys(loadtestRedux.loadTests).map((key) => loadtestRedux.loadTests[Number(key)]));
+
+    setActiveTests(() => getActiveTests());
+  }, [loadtestRedux.loadTests, loadtestRedux.loadTestsTests, socket, socketRedux.rooms]);
+
 
   return (
     <DefaultLayout>
@@ -18,10 +82,21 @@ const LandingPage: React.FC = () => {
         </div>
 
         <div className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <OnGoingTestCard test={undefined} />
-          <OnGoingTestCard test={undefined} />
-          <OnGoingTestCard test={undefined} />
-          <OnGoingTestCard test={undefined} />
+          {
+            activeTests.length > 0 ? (
+              <>
+                {
+                  activeTests.map((test, index) => (
+                    <OnGoingTestCard key={index} test={test.test} activeTest={test.activeTest} />
+                  ))
+                }
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center col-span-3">
+                <p className="text-muted-foreground text-sm font-normal">No active tests</p>
+              </div>
+            )
+          }
         </div>
       </div>
 

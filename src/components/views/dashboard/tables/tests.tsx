@@ -1,4 +1,4 @@
-import { deleteTest, getTests } from "@/api/tests";
+import { deleteTest } from "@/api/tests";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -12,27 +12,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useAppSelector } from "@/redux/store";
 
 const TestsTableComponent: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const loadTests = useQuery({
-    queryKey: [`loadTests`],
-    staleTime: 1000 * 60 * 5,
-    queryFn: async () => {
+  const loadtestRedux = useAppSelector((state) => state.loadtestReduser);
+  const [loadTests, setLoadTests] = useState<LoadTestModel[]>();
 
-      const testsResponse = await getTests();
-
-      return testsResponse.data as LoadTestModel[];
-    }
-  });
+  useEffect(() => {
+    setLoadTests(Object.keys(loadtestRedux.loadTests).map((key) => loadtestRedux.loadTests[Number(key)]));
+  }, [loadtestRedux.loadTests]);
 
   return (
     <>
@@ -48,22 +45,22 @@ const TestsTableComponent: React.FC = () => {
         <TableBody>
 
           {
-            !loadTests || loadTests.isLoading ? (
+            !loadTests ? (
               <TableRow>
                 <TableCell colSpan={3} className="text-center">
                   <RefreshCw className="animate-spin w-6 h-6" />
                 </TableCell>
               </TableRow>
             ) : (
-              loadTests.data ? (
-                loadTests.data.length === 0 ? (
+              loadTests ? (
+                loadTests.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={3} className="text-center">
                       No tests found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  loadTests.data.map((test) => (
+                  loadTests.map((test) => (
                     <TableRow key={test.id}>
                       <TableCell className="font-medium">{test.name}</TableCell>
                       <TableCell>{moment(test.createdAt).calendar()}</TableCell>

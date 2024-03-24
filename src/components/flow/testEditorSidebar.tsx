@@ -62,6 +62,7 @@ const TestEditorSidebarComponent: React.FC = () => {
                 </span>
                 <p className="text-base font-semibold text-foreground">GET</p>
               </div>
+
               <div
                 className="w-full h-[2rem] bg-background border-amber-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
                 draggable
@@ -71,6 +72,28 @@ const TestEditorSidebarComponent: React.FC = () => {
                   <Workflow className="h-4 w-4 text-muted" />
                 </span>
                 <p className="text-base font-semibold text-foreground">POST</p>
+              </div>
+
+              <div
+                className="w-full h-[2rem] bg-background border-blue-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'putRequest')}
+              >
+                <span className="h-full w-[2rem] bg-blue-500 rounded-l-sm flex items-center justify-center">
+                  <Workflow className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">PUT</p>
+              </div>
+
+              <div
+                className="w-full h-[2rem] bg-background border-red-500 border rounded-md flex items-center shadow-md cursor-pointer space-x-3"
+                draggable
+                onDragStart={(event) => onDragStart(event, 'deleteRequest')}
+              >
+                <span className="h-full w-[2rem] bg-red-500 rounded-l-sm flex items-center justify-center">
+                  <Workflow className="h-4 w-4 text-muted" />
+                </span>
+                <p className="text-base font-semibold text-foreground">DELETE</p>
               </div>
             </div>
 

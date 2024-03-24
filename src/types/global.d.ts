@@ -12,6 +12,15 @@ interface PostRequestNodeData extends NodeData {
   body?: string
 }
 
+interface PutRequestNodeData extends NodeData {
+  url: string,
+  body?: string
+}
+
+interface DeleteRequestNodeData extends NodeData {
+  url: string,
+}
+
 interface IfConditionNodeData extends NodeData {
   field: string,
   condition: string,

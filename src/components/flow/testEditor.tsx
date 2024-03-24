@@ -12,6 +12,8 @@ import StartNode from './nodes/startNode';
 import StopNode from './nodes/stopNode';
 import DelayNode from './nodes/delayNode';
 import toast from 'react-hot-toast';
+import PutRequestNode from './nodes/putRequest';
+import DeleteRequestNode from './nodes/deleteRequest';
 
 const nodeTypes = [
   {
@@ -61,6 +63,30 @@ const nodeTypes = [
     }
   },
   {
+    name: "putRequest",
+    component: PutRequestNode,
+    data: {
+      label: "Put Request",
+      url: "https://example.com/put"
+    },
+    connecting: {
+      connectable: true,
+      maxConnections: 1
+    }
+  },
+  {
+    name: "deleteRequest",
+    component: DeleteRequestNode,
+    data: {
+      label: "Delete Request",
+      url: "https://example.com/delete"
+    },
+    connecting: {
+      connectable: true,
+      maxConnections: 1
+    }
+  },
+  {
     name: "ifCondition",
     component: IfConditionNode,
     data: {
@@ -91,9 +117,9 @@ const nodeTypes = [
     }
   }
 ] as {
-  name: "startNode" | "stopNode" | "getRequest" | "postRequest" | "ifCondition" | "delayNode",
+  name: "startNode" | "stopNode" | "getRequest" | "postRequest" | "putRequest" | "deleteRequest" | "ifCondition" | "delayNode",
   component: React.FC<unknown>,
-  data?: GetRequestNodeData | PostRequestNodeData | IfConditionNodeData | DelayNodeData | NodeData,
+  data?: GetRequestNodeData | PostRequestNodeData | PutRequestNodeData | DeleteRequestNodeData | IfConditionNodeData | DelayNodeData | NodeData,
   connecting: {
     connectable: boolean,
     maxConnections: number

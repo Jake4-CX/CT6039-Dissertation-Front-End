@@ -45,7 +45,7 @@ const LandingPage: React.FC = () => {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loadTests, setLoadTests] = useState<LoadTestModel[]>();
+  const [_loadTests, setLoadTests] = useState<LoadTestModel[]>();
 
   useEffect(() => {
     function getActiveTests() {

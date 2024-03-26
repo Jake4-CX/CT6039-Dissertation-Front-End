@@ -147,12 +147,13 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
   const reactFlowRef = useRef(null);
   const [nodes, setNodes] = useState<Node[]>(props.reactFlowPlan.nodes);
   const [edges, setEdges] = useState<Edge[]>(props.reactFlowPlan.edges);
-  const [viewport, setViewport] = useState<Viewport>(props.reactFlowPlan.viewport);
+  const [viewport] = useState<Viewport>(props.reactFlowPlan.viewport);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
 
   function createNodeTree(nodes: CustomNode[], edges: CustomEdge[]): TreeNode[] {
-    const nodesMap: { [key: string]: TreeNode } = nodes.reduce((acc, node) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodesMap: { [key: string]: TreeNode } = nodes.reduce((acc: any, node) => {
       const data = node.data as GetRequestNodeData | PostRequestNodeData | IfConditionNodeData;
 
       const treeNode: TreeNode = {
@@ -255,7 +256,7 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
   );
 
 
-  const onDragOver = useCallback((event: DragEvent) => {
+  const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = 'move';
@@ -263,7 +264,7 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
   }, []);
 
   const onDrop = useCallback(
-    (event: DragEvent) => {
+    (event: React.DragEvent) => {
       event.preventDefault();
 
       if (!event.dataTransfer) {
@@ -330,7 +331,6 @@ const TestEditorComponent: ForwardRefRenderFunction<TestEditorComponentHandles, 
           onDrop={onDrop}
           onDragOver={onDragOver}
           defaultViewport={viewport}
-          onViewportChange={setViewport}
           deleteKeyCode={["Delete", "Backspace"]}
           className='w-full'
         >

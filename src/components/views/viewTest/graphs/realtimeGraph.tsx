@@ -36,7 +36,7 @@ const RealtimeGraph: React.FC<RealtimeGraphProps> = ({ runningTest, chartData })
                 <LineChart data={chartData}>
                   <Line type="monotone" dataKey="totalRequests" stroke="#8884d8" name="Total Requests" dot={false} strokeWidth={3} animationDuration={0} hide={!visibleLines.totalRequests} />
                   <Line type="monotone" dataKey="averageLatency" stroke="#82ca9d" name="Average Latency" dot={false} strokeWidth={3} animationDuration={0} hide={!visibleLines.averageLatency} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip active={false} payload={[]} label={""} />} />
                   <Legend onClick={handleLegendClick} />
                 </LineChart>
               </ResponsiveContainer>

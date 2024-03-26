@@ -1,14 +1,22 @@
 import React, { useMemo } from 'react';
-import { getConnectedEdges, Handle, HandleProps, useNodeId, useStore } from 'reactflow';
+import { Connection, Edge, getConnectedEdges, Handle, HandleType, OnConnect, Position, useNodeId, useStore } from 'reactflow';
 
-const selector = (s) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const selector = (s: { nodeInternals: any, edges: Edge[] }) => ({
   nodeInternals: s.nodeInternals,
   edges: s.edges,
 });
 
-interface DefaultHandleProps extends HandleProps {
-  isConnectable: boolean | number | undefined,
+interface DefaultHandleProps {
+  isConnectable?: boolean | number | undefined,
   style: React.CSSProperties | undefined,
+  type: HandleType;
+  position: Position;
+  isConnectableStart?: boolean | undefined;
+  isConnectableEnd?: boolean | undefined;
+  onConnect?: OnConnect | undefined;
+  isValidConnection?: ((connection: Connection) => boolean) | undefined;
+  id?: string | undefined;
 }
 
 const DefaultHandle: React.FC<DefaultHandleProps> = (props) => {

@@ -4,8 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ColumnDef, SortingState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
-import toast from "react-hot-toast";
 import { useState } from "react";
+import ViewReportModal from "../modals/viewReport";
 
 interface TestsTableComponentProps {
   loadTests: ViewLoadTestModal | undefined
@@ -42,7 +42,7 @@ export const columns: ColumnDef<LoadTestTestsModel>[] = [
   },
   {
     header: 'Actions',
-    cell: () => <Button size="sm" variant="outline" onClick={() => toast.error("ToDo")}>View Report</Button>
+    cell: ({ row }) => <ViewReportModal loadTestsTest={row.original}  />
   }
 ]
 

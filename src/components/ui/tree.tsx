@@ -50,7 +50,6 @@ const Tree = React.forwardRef<
 
     function walkTreeItems(items: TreeDataItem[] | TreeDataItem, targetId: string) {
       if (items instanceof Array) {
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < items.length; i++) {
           ids.push(items[i]!.id);
           if (walkTreeItems(items[i]!, targetId) && !expandAll) {
@@ -67,7 +66,7 @@ const Tree = React.forwardRef<
 
     walkTreeItems(data, initialSlelectedItemId)
     return ids;
-  }, [data, initialSlelectedItemId])
+  }, [data, expandAll, initialSlelectedItemId])
 
   const { ref: refRoot, width, height } = useResizeObserver();
 

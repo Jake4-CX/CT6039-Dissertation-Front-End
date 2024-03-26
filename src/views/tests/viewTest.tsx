@@ -74,6 +74,7 @@ const ViewLoadTestPage: React.FC = () => {
   const [loadTestData, setLoadTestData] = useState<LoadTestModel | undefined>(undefined);
   const [isRunning, setIsRunning] = useState(false);
   const [runningTest, setRunningTest] = useState<LoadTestTestsModel | undefined>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [testMetrics, setTestMetrics] = useState<{ metrics: LoadTestMetricsModel, testFragments: Map<number, ResponseFragment[]> | undefined } | undefined>(undefined);
 
   useEffect(() => {

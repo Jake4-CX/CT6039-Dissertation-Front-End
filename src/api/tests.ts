@@ -9,7 +9,7 @@ export function getTestById(id: string) {
   return api.get(`/load-tests/${id}`);
 }
 
-export function createTest(data: any) {
+export function createTest(data: { name: string }) {
   return api.post("/load-tests", data);
 }
 

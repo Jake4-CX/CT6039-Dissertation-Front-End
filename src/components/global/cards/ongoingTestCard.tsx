@@ -2,9 +2,8 @@ import { TbActivity, TbClock, TbPackage, TbUsers } from "react-icons/tb";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-import { LineChart, Line, ResponsiveContainer, Area } from 'recharts';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { useEffect, useMemo, useState } from "react";
-import { faker } from '@faker-js/faker';
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/redux/store";
@@ -21,12 +20,6 @@ type OnGoingTestCardProps = {
   activeTest: LoadTestTestsModel;
 }
 
-function generateSecond() {
-  return { name: faker.date.recent().toLocaleDateString(), uv: faker.number.int({ min: -1000, max: 1000 }), pv: faker.number.int({ min: -1000, max: 1000 }), amt: faker.number.int({ min: -1000, max: 1000 }) };
-}
-
-// const data = [...Array(60)].map(() => generateSecond());
-
 const OnGoingTestCard: React.FC<OnGoingTestCardProps> = ({ test, activeTest }) => {
 
   const navigate = useNavigate();
@@ -34,17 +27,6 @@ const OnGoingTestCard: React.FC<OnGoingTestCardProps> = ({ test, activeTest }) =
   const [chartData, setChartData] = useState<{ name: string, totalRequests: number, averageLatency: number | undefined }[]>(initialChartData);
 
   const loadtestRedux = useAppSelector((state) => state.loadtestReduser);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setChartData(currentChartData => {
-  //       const newData = [...currentChartData.slice(1), generateSecond()];
-  //       return newData;
-  //     });
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
 
   useEffect(() => {
 

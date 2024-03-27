@@ -74,10 +74,10 @@ const OnGoingTestCard: React.FC<OnGoingTestCardProps> = ({ test, activeTest }) =
 
   return (
     <>
-      <Card>
+      <Card data-testid="ongoingTestCard">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <div className="flex flex-col">
-            <h3 className="whitespace-nowrap tracking-tight text-sm font-medium">{test.name}</h3>
+            <h3 className="whitespace-nowrap tracking-tight text-sm font-medium" data-testid="testNameHeading">{test.name}</h3>
             <p className="text-muted-foreground text-sm font-normal">Load test in progress</p>
           </div>
           <TbActivity className="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -87,7 +87,7 @@ const OnGoingTestCard: React.FC<OnGoingTestCardProps> = ({ test, activeTest }) =
           <div className="grid gap-2 text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <TbClock className="w-4 h-4" />
-              <span className=""><span className="font-medium">Time Remaining</span>: {moment(activeTest.createdAt).add(activeTest.duration, 'milliseconds').fromNow()}</span>
+              <span className="" data-testid="timeRemaining"><span className="font-medium">Time Remaining</span>: {moment(activeTest.createdAt).add(activeTest.duration, 'milliseconds').fromNow()}</span>
             </div>
             <div className="flex items-center gap-2">
               <TbUsers className="w-4 h-4" />

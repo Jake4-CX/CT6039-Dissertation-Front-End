@@ -1,7 +1,7 @@
-import { Button } from "../ui/button";
+// import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { TbActivity, TbPackage } from "react-icons/tb";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import ThemeToggleComponent from "./themeToggle";
 
 const SidebarComponent: React.FC = () => {
@@ -39,7 +39,7 @@ const SidebarComponent: React.FC = () => {
               </Link>
             </nav>
           </div>
-          <div className="mt-auto p-4">
+          {/* <div className="mt-auto p-4">
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle>Upgrade to Pro</CardTitle>
@@ -51,7 +51,7 @@ const SidebarComponent: React.FC = () => {
                 </Button>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

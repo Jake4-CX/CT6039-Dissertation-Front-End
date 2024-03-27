@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { FiFlag, FiSearch } from "react-icons/fi";
+import { FiFlag } from "react-icons/fi";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+// import { Input } from "../ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const NavbarComponent: React.FC = () => {
@@ -16,7 +16,7 @@ const NavbarComponent: React.FC = () => {
           <span className="sr-only">Home</span>
         </Link>
         <div className="w-full flex-1">
-          <form>
+          {/* <form>
             <div className="relative">
               <FiSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input
@@ -25,7 +25,7 @@ const NavbarComponent: React.FC = () => {
                 type="search"
               />
             </div>
-          </form>
+          </form> */}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

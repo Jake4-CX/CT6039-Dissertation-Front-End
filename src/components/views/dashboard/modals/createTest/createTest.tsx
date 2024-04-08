@@ -106,7 +106,7 @@ const CreateTestModal: React.FC = () => {
                 />
 
                 <DialogFooter>
-                  <Button type="submit" disabled={isPending} className="select-none">{
+                  <Button type="submit" disabled={isPending} className="select-none" data-testid="submit-test-button">{
                     isPending ?
                       <>
                         <RefreshCw className="animate-spin w-4 h-4 mr-2" />

@@ -66,8 +66,8 @@ const TestsTableComponent: React.FC = () => {
                       <TableCell>{moment(test.createdAt).calendar()}</TableCell>
                       <TableCell>
                         <div className="flex flex-row justify-end space-x-2">
-                          <Button size="sm" variant="outline" className="rounded-full" onClick={() => navigate(`/test/` + test.uuid)}>View</Button>
-                          <DeleteTaskAlertModal id={test.uuid} />
+                          <Button size="sm" variant="outline" className="rounded-full" onClick={() => navigate(`/test/` + test.uuid)} data-testid={`view-test-${test.id}`}>View</Button>
+                          <DeleteTaskAlertModal uuid={test.uuid} />
                         </div>
                       </TableCell>
 
@@ -89,7 +89,7 @@ const TestsTableComponent: React.FC = () => {
   )
 }
 
-const DeleteTaskAlertModal: React.FC<{ id: string }> = ({ id }) => {
+const DeleteTaskAlertModal: React.FC<{ uuid: string }> = ({ uuid }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const queryClient = useQueryClient();
@@ -108,14 +108,14 @@ const DeleteTaskAlertModal: React.FC<{ id: string }> = ({ id }) => {
   });
 
   function onClick() {
-    mutate(id);
+    mutate(uuid);
   }
 
   return (
     <>
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogTrigger asChild>
-          <Button size="sm" variant="outline" className="rounded-full">Delete</Button>
+          <Button size="sm" variant="outline" className="rounded-full" data-testid={`delete-test-trigger-${uuid}`}>Delete</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -127,7 +127,7 @@ const DeleteTaskAlertModal: React.FC<{ id: string }> = ({ id }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onClick} disabled={isPending}>
+            <AlertDialogAction onClick={onClick} disabled={isPending} data-testid={`delete-test-action-${uuid}`}>
               {
                 isPending ? <>
                   <RefreshCw className="animate-spin w-4 h-4 mr-2" />

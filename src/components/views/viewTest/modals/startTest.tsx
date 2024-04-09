@@ -38,7 +38,7 @@ import { startTest } from "@/api/tests";
 
 const formSchema = z.object({
   duration: z.number().int().min(1000, "Duration must be at least 1000").max(86400000, "Duration must be at most 86,400,000"),
-  virtualUsers: z.number().int().min(1, "Virtual users must be at least 1").max(1000, "Virtual users must be at most 50,000"),
+  virtualUsers: z.number().int().min(1, "Virtual users must be at least 1").max(50000, "Virtual users must be at most 50,000"),
   loadTestType: z.enum(["LOAD", "STRESS", "SPIKE", "SOAK"]),
 })
 

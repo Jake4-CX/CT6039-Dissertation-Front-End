@@ -106,12 +106,6 @@ const LandingPage: React.FC = () => {
           <h3 className="whitespace-nowrap tracking-tight text-lg md:text-xl font-semibold">My Test plans</h3>
           <p className="text-muted-foreground text-sm font-normal">Subheadding here</p>
         </div>
-
-        <Button className="rounded-full" size="icon" variant={"outline"}>
-          <TbPlus className="w-4 h-4" />
-          <span className="sr-only">New test</span>
-        </Button>
-
       </div>
 
 

@@ -60,6 +60,10 @@ After setting up the project, you can access the local web server at `http://loc
 
 This front-end is deployed on Digital Ocean as a static site via the App Platform.
 
+## Backend Repository
+
+For the backend source code and setup instructions, please visit the [backend repository](https://github.com/Jake4-CX/CT6039-Dissertation-Backend/).
+
 ## Contributing
 
 Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change. Please ensure to update tests as appropriate.

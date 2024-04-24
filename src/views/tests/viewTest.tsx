@@ -11,7 +11,7 @@ import { getTestById, stopTest } from "@/api/tests";
 import toast from "react-hot-toast";
 import StartTestModal from "@/components/views/viewTest/modals/startTest";
 import convertToMaps from "@/utils/convertToMaps";
-import TestsTableComponent from "@/components/views/viewTest/tables/testHistory";
+import TestsTableComponent from "@/components/views/viewTest/tables/testHistory/testHistory";
 import SocketFactory from "@/components/factory/socketFactory";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";

@@ -5,7 +5,7 @@ import { ColumnDef, SortingState, flexRender, getCoreRowModel, getPaginationRowM
 import { RefreshCw } from "lucide-react";
 import moment from "moment";
 import { useState } from "react";
-import ViewReportModal from "../modals/viewReport";
+import ViewReportModal from "../../modals/viewReport";
 
 interface TestsTableComponentProps {
   loadTests: ViewLoadTestModal | undefined
@@ -42,7 +42,7 @@ export const columns: ColumnDef<LoadTestTestsModel>[] = [
   },
   {
     header: 'Actions',
-    cell: ({ row }) => <ViewReportModal loadTestsTest={row.original}  />
+    cell: ({ row }) => <ViewReportModal loadTestsTest={row.original} />
   }
 ]
 
@@ -92,19 +92,27 @@ const TestsTableComponent: React.FC<TestsTableComponentProps> = ({ loadTests }) 
         </TableHeader>
 
         <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.length !== 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  No tests found
+                </TableCell>
               </TableRow>
-            ))
+            )
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="flex items-center justify-center">

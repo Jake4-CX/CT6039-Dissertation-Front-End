@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { ClockIcon, Percent } from "lucide-react";
 import { useState } from "react";
+import ReportGraph from "../graphs/reportGraph";
 
 interface ViewReportModalProps {
   loadTestsTest: LoadTestTestsModel
@@ -37,19 +38,21 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ loadTestsTest }) => {
               </DialogDescription>
             </DialogHeader>
 
+            <ReportGraph loadTestsTest={loadTestsTest} />
+
             <div className="grid gap-2">
               <div className="flex items-center space-x-2">
                 {/* <UsersIcon className="h-4 w-4 opacity-50" /> */}
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                   <span className="font-semibold mr-1">Total Requests:</span>
-                  {loadTestsTest.testMetrics.totalRequests || 0}
+                  {(loadTestsTest.testMetrics.totalRequests || 0).toLocaleString()}
                 </div>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Percent className="h-4 w-4 opacity-50" />
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-semibold mr-1">9th Percentile Latency:</span>
+                  <span className="font-semibold mr-1">95th Percentile Latency:</span>
                   {(loadTestsTest.testMetrics.averageResponseTime).toFixed(2)}ms
                 </div>
               </div>
@@ -58,7 +61,7 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ loadTestsTest }) => {
                 <ClockIcon className="h-4 w-4 opacity-50" />
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                   <span className="font-semibold mr-1">Total Time:</span>
-                  {loadTestsTest.testMetrics.totalResponseTime}s
+                  {(loadTestsTest.duration / 1000).toLocaleString()}s
                 </div>
               </div>
             </div>

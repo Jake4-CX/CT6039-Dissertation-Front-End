@@ -50,9 +50,24 @@ interface LoadTestMetricsModel {
   failedRequests: number,
   totalResponseTime: number,
   averageResponseTime: number,
+  loadTestHistory?: LoadTestHistoryModel,
   createdAt: string,
   updatedAt: string,
   deletedAt: string | null
+}
+
+interface LoadTestHistoryModel {
+  id: number,
+  loadTestMetricModelId: number,
+  testHistory: string, // JSON string
+  createdAt: string,
+  updatedAt: string,
+  deletedAt: string | null
+}
+
+interface TestHistoryFragment {
+  requests: number,
+  averageResponseTime: number
 }
 
 // Socket.IO

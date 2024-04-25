@@ -199,7 +199,6 @@ const ViewLoadTestPage: React.FC = () => {
                               }
                             </Button>
                           </div>
-                          <Button size="sm" variant={"outline"}>View Logs</Button>
                         </div>
                       </CardHeader>
                     </Card>
